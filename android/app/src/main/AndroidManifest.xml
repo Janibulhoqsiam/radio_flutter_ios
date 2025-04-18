@@ -25,7 +25,7 @@
     <application
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true"
-        android:label="RadioApintie"
+        android:label="Apintie"
         android:name="${applicationName}"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/launcher_icon">
