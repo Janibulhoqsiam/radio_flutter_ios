@@ -126,15 +126,14 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ).paddingOnly(
                           bottom: Dimensions.paddingVerticalSize * 0.0),
-                      Platform.isIOS
-                          ? AirPlayImageButton()
-                          : IconButton(
-                              icon: Icon(Icons.cast),
-                              onPressed: () {
-                                showAndroidOutputChooser();
-                              },
-                            ).paddingOnly(
-                              bottom: Dimensions.paddingVerticalSize * 0.0),
+                      IconButton(
+                        icon: Platform.isIOS ? Icon(Icons.airplay) : Icon(Icons.cast),
+                        onPressed: () {
+
+                        },
+                      ).paddingOnly(
+                        bottom: Dimensions.paddingVerticalSize * 0.0,
+                      ),
                       FittedBox(
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -420,59 +419,4 @@ class LiveStreamingScreenMobile extends StatelessWidget {
     );
   }
 
-  static const platform = MethodChannel('com.apintie.radio/cast');
-
-  Future<void> showAirPlayPicker() async {
-    if (Platform.isIOS) {
-      try {
-        await platform.invokeMethod('showAirPlay');
-      } on PlatformException catch (e) {
-        print("AirPlay failed: ${e.message}");
-      }
-    }
-  }
-
-  static const _platform = MethodChannel('com.apintie.radio/cast');
-
-  Future<void> showAndroidOutputChooser() async {
-    try {
-      await _platform.invokeMethod('showOutputChooser');
-    } on PlatformException catch (e) {
-      print("Error showing output chooser: ${e.message}");
-    }
-  }
-}
-
-class AirPlayImageButton extends StatelessWidget {
-  const AirPlayImageButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    if (!Platform.isIOS) return SizedBox.shrink();
-
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          UiKitView(
-            viewType: 'airplay_view',
-            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          ),
-          GestureDetector(
-            onTap: () {
-              // Visual feedback or log if needed
-              print('Image tapped!');
-            },
-            child: Image.asset(
-              'assets/icons/airplay.svg', // Replace with your image path
-              width: 30,
-              height: 30,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
