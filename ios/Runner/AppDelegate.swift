@@ -8,6 +8,8 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
+  GeneratedPluginRegistrant.register(with:self)
+
     // Ensure the plugin registrar is found
 //    if let registrar = self.registrar(forPlugin: "airplay_view") {
 //        let factory = AirPlayViewFactory(messenger: registrar.messenger())

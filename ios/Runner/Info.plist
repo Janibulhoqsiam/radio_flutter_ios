@@ -15,7 +15,7 @@
 	<key>CFBundleName</key>
 	<string>Apintie</string>
 	<key>CFBundlePackageType</key>
-	<string>APPL</string>
+	<string>APP</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
