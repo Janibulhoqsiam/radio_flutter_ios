@@ -7,7 +7,7 @@ workflows:
       app_store_connect: Apintie_
     environment:
       ios_signing:
-        distribution_type: production
+        distribution_type: app_store
         bundle_identifier: com.viastreaming.apintie
       vars:
         APP_ID: 6808a9a516c8016a03253f44 # <-- Put your APP ID here
