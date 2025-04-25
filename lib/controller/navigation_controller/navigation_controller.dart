@@ -13,7 +13,7 @@ import '../../views/show_schedule_screen/show_schedule_screen.dart';
 class NavigationController extends GetxController with AuthService{
 
 
-  final RxInt selectedIndex = 2.obs;
+  RxInt selectedIndex = 2.obs;
   final RxBool isRoutesIndex = false.obs;
 
   final List body = [

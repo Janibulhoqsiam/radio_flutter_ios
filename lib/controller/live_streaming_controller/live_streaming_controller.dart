@@ -39,27 +39,34 @@ class LiveStreamingController extends GetxController with DashboardService {
   late AudioPlayer audioPlayer;
 
   void playRadio() async {
+    print('🔄 playRadio() called');
     isPlayLoading.value = true;
-    update();
-    if (!isPlaying.value) {
-      try {
 
-        await audioPlayer.play();
+    print('🟠 Initial isPlaying value: ${isPlaying.value}');
+
+    if (isPlaying.value==false) {
+      print('▶️ Attempting to play audio...');
+      try {
+        audioPlayer.play();
         isPlaying.value = true;
         startUsageTimer();
-        update();
+
+        print('✅ Audio started playing');
       } catch (e) {
-        // CustomSnackBar.error("");
+        print('❌ Error playing audio: $e');
       }
     } else {
+      print('⏹ Attempting to stop audio...');
       isPlaying.value = false;
-      await audioPlayer.stop();
+      audioPlayer.stop();
       stopUsageTimer();
-      update();
+      print('🛑 Audio stopped');
     }
+
     isPlayLoading.value = false;
-    update();
+    print('🔁 Final isPlaying value: ${isPlaying.value}');
   }
+
 
 
 

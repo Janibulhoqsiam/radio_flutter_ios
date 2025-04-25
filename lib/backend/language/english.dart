@@ -1,5 +1,5 @@
 class Strings {
-  static const String appName = "RadioApintie";
+  static const String appName = "Apintie";
   static const String programSchedule = "appLProgramSchedule";
   static const String notifications = "appLNotifications";
   static const String liveOnYoutube = "appLLiveOnYoutube";

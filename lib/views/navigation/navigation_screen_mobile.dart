@@ -5,10 +5,12 @@ import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../../controller/banner_ad_controller.dart';
 import '/custom_assets/assets.gen.dart';
 import '../../controller/live_streaming_controller/live_streaming_controller.dart';
 import '../../controller/navigation_controller/navigation_controller.dart';
 import '../../widgets/drawer/drawer_widget.dart';
+
 
 class NavigationScreenMobile extends StatelessWidget {
   NavigationScreenMobile({super.key});
@@ -16,36 +18,103 @@ class NavigationScreenMobile extends StatelessWidget {
   final controller = Get.put(NavigationController());
   final liveStreamingController = Get.put(LiveStreamingController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final bannerAdController = Get.find<BannerAdController>();
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Obx(() {
+  //     return Scaffold(
+  //       extendBody: true,
+  //       extendBodyBehindAppBar:
+  //           controller.selectedIndex.value == 2 ? true : false,
+  //       key: scaffoldKey,
+  //       backgroundColor: CustomColor.primaryLightScaffoldBackgroundColor,
+  //       drawer: const DrawerWidget(),
+  //       appBar: _appBarWidget(context),
+  //       // body: controller.body[controller.selectedIndex.value],
+  //       body: Stack(children: [
+  //         Column(
+  //           children: [
+  //             Expanded(
+  //               child: controller.body[controller.selectedIndex.value],
+  //             ),
+  //           ],
+  //         )
+  //       ]),
+  //
+  //       bottomNavigationBar: Obx(() => liveStreamingController.isLoading
+  //           ? const SizedBox.shrink()
+  //           : (controller.selectedIndex.value == 0 &&
+  //                   liveStreamingController
+  //                       .liveShowModel.data.schedule.isNotEmpty)
+  //               ? _payerBottomNavBarWidget(context)
+  //               : _bottomNavBarWidget(context)),
+  //       floatingActionButton: Obx(() => liveStreamingController.isLoading
+  //           ? const SizedBox.shrink()
+  //           : ((liveStreamingController.liveShowModel.data.schedule.isEmpty ||
+  //                   controller.selectedIndex.value != 0)
+  //               ? _middleButton(context)
+  //               : const SizedBox.shrink())),
+  //       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+  //     );
+  //   });
+  // }
+
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       return Scaffold(
         extendBody: true,
-        extendBodyBehindAppBar:
-            controller.selectedIndex.value == 2 ? true : false,
+        extendBodyBehindAppBar: controller.selectedIndex.value == 2,
         key: scaffoldKey,
         backgroundColor: CustomColor.primaryLightScaffoldBackgroundColor,
         drawer: const DrawerWidget(),
         appBar: _appBarWidget(context),
-        body: controller.body[controller.selectedIndex.value],
-        bottomNavigationBar: Obx(() => liveStreamingController.isLoading
+
+        // 🔧 Body with Banner Ad above FAB and BottomNav
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: controller.body[controller.selectedIndex.value],
+                ),
+              ],
+            ),
+
+
+          ],
+        ),
+
+        // 🔽 Bottom Navigation Bar Logic
+        bottomNavigationBar: Obx(() =>
+        liveStreamingController.isLoading
             ? const SizedBox.shrink()
             : (controller.selectedIndex.value == 0 &&
-                    liveStreamingController
-                        .liveShowModel.data.schedule.isNotEmpty)
-                ? _payerBottomNavBarWidget(context)
-                : _bottomNavBarWidget(context)),
-        floatingActionButton: Obx(() => liveStreamingController.isLoading
+            liveStreamingController
+                .liveShowModel.data.schedule.isNotEmpty)
+            ? _payerBottomNavBarWidget(context)
+            : _bottomNavBarWidget(context)),
+
+        // 🎯 Floating Action Button Logic
+        floatingActionButton: Obx(() =>
+        liveStreamingController.isLoading
             ? const SizedBox.shrink()
-            : ((liveStreamingController.liveShowModel.data.schedule.isEmpty ||
-                    controller.selectedIndex.value != 0)
-                ? _middleButton(context)
-                : const SizedBox.shrink())),
+            : ((liveStreamingController
+            .liveShowModel.data.schedule.isEmpty ||
+            controller.selectedIndex.value != 0)
+            ? _middleButton(context)
+            : const SizedBox.shrink())),
+
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );
     });
   }
+
+
+
 
   _payerBottomNavBarWidget(BuildContext context) {
     String imagePath =
@@ -107,7 +176,7 @@ class NavigationScreenMobile extends StatelessWidget {
                         CircleAvatar(
                           radius: 30,
                           backgroundImage: NetworkImage(
-                            "$imagePath/${liveStreamingController.liveShowModel.data.schedule.first.image}",
+                            "https://radioapintie.xyz/public/backend/files/schedule/05e64b73-14be-46c2-b2a0-257c058a0403.webp",
                           ),
                         ).paddingOnly(right: Dimensions.widthSize * .5),
                         Expanded(
@@ -194,13 +263,16 @@ class NavigationScreenMobile extends StatelessWidget {
                                       radius: Dimensions.radius * 1.5,
                                       backgroundColor: CustomColor.whiteColor,
                                       child: Center(
-                                        // child: Icon(
-                                        //   liveStreamingController.isPlaying.value
-                                        //       ? Icons.pause
-                                        //       : Icons.play_arrow,
-                                        //   color: CustomColor.primaryLightColor,
-                                        //   size: MediaQuery.sizeOf(context).width * .04,
-                                        // ),
+                                        child: Icon(
+                                          liveStreamingController
+                                                  .isPlaying.value
+                                              ? Icons.play_arrow
+                                              : Icons.pause,
+                                          color: CustomColor.primaryLightColor,
+                                          size:
+                                              MediaQuery.sizeOf(context).width *
+                                                  .04,
+                                        ),
                                       ),
                                     ),
                                   )),
@@ -236,102 +308,6 @@ class NavigationScreenMobile extends StatelessWidget {
     );
   }
 
-  // _bottomNavBarWidget() {
-  //   return ClipRRect(
-  //     borderRadius: BorderRadius.vertical(
-  //       top: Radius.circular(
-  //         Dimensions.radius * 2.1,
-  //       ),
-  //     ),
-  //     child: BottomAppBar(
-  //         clipBehavior: Clip.hardEdge,
-  //         surfaceTintColor: CustomColor.whiteColor,
-  //         shadowColor: CustomColor.blackColor,
-  //         height: Dimensions.heightSize * 5,
-  //         elevation: 15,
-  //         shape: const CircularNotchedRectangle(),
-  //         notchMargin: 5,
-  //         color: CustomColor.whiteColor,
-  //
-  //
-  //
-  //
-  //
-  //         child: Padding(
-  //           padding: EdgeInsets.symmetric(
-  //             horizontal: Dimensions.widthSize * 0.0,
-  //           ),
-  //           child: Container(
-  //             margin: EdgeInsets.only(
-  //               top: Dimensions.heightSize * .6,
-  //             ),
-  //             decoration: BoxDecoration(
-  //               color: Colors.transparent,
-  //               borderRadius: BorderRadius.only(
-  //                 topRight: Radius.circular(
-  //                   Dimensions.radius * 2,
-  //                 ),
-  //                 topLeft: Radius.circular(
-  //                   Dimensions.radius * 2,
-  //                 ),
-  //               ),
-  //             ),
-  //             child: Row(
-  //                 mainAxisSize: MainAxisSize.max,
-  //                 mainAxisAlignment: mainSpaceBet,
-  //                 children: [
-  //                   BottomItemWidget(
-  //                       icon: Icons.dashboard_outlined,
-  //                       label: Strings.newsfeed,
-  //                       index: 0),
-  //                   // horizontalSpace(Dimensions.widthSize * 0.3),
-  //                   BottomItemWidget(
-  //                       icon: Icons.live_tv,
-  //                       label: "Live Tv", // New tab
-  //                       index: 1),
-  //                   // horizontalSpace(Dimensions.widthSize * 1.6),
-  //
-  //
-  //                   Align(
-  //                     alignment: Alignment.bottomCenter,
-  //                     child: Container(
-  //                       alignment: Alignment.bottomCenter,
-  //                       child: TitleHeading5Widget(
-  //                         padding: EdgeInsets.only(
-  //                             top: Dimensions.heightSize * 0.75),
-  //                         text: Strings.liveStreaming,
-  //                         fontWeight: FontWeight.w600,
-  //                         fontSize: Dimensions.headingTextSize7,
-  //                         color: controller.selectedIndex.value == 2
-  //                             ? CustomColor.primaryLightTextColor
-  //                             : CustomColor.primaryLightTextColor
-  //                             .withOpacity(0.5),
-  //                       ),
-  //                     ),
-  //                   ),
-  //
-  //
-  //
-  //
-  //
-  //                   horizontalSpace(Dimensions.widthSize * 1.5),
-  //                   BottomItemWidget(
-  //                       icon: Icons.radio,
-  //                       label: Strings.showSchedule,
-  //                       index: 3),
-  //
-  //                   horizontalSpace(Dimensions.widthSize * 1.5),
-  //                   // Space between
-  //                   BottomItemWidget(
-  //                       icon: Icons.import_contacts_outlined,
-  //                       label: "Contacts", // New tab
-  //                       index: 4),
-  //                 ]),
-  //           ),
-  //         )),
-  //   );
-  // }
-
   _bottomNavBarWidget(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.vertical(
@@ -359,9 +335,7 @@ class NavigationScreenMobile extends StatelessWidget {
                     label: Strings.newsfeed,
                     index: 0,
                   ),
-
                   horizontalSpace(Dimensions.widthSize * 1.8),
-
                   BottomItemWidget(
                     icon: Icons.live_tv,
                     label: "Live Tv",
@@ -398,16 +372,15 @@ class NavigationScreenMobile extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top + Dimensions.heightSize * 0.2,
+                    top: MediaQuery.of(context).padding.top +
+                        Dimensions.heightSize * 0.2,
                   ),
                   child: TitleHeading5Widget(
                     padding: EdgeInsets.zero,
                     text: Strings.liveStreaming,
                     fontWeight: FontWeight.w600,
                     fontSize: Dimensions.headingTextSize7,
-                    color: controller.selectedIndex.value == 2
-                        ? CustomColor.primaryLightTextColor
-                        : CustomColor.primaryLightTextColor.withOpacity(0.5),
+                    color: _getColorForIndex(controller.selectedIndex.value),
                   ),
                 ),
               ),
@@ -418,7 +391,23 @@ class NavigationScreenMobile extends StatelessWidget {
     );
   }
 
-
+  // Method to get color for each index
+  Color _getColorForIndex(int index) {
+    switch (index) {
+      case 0:
+        return CustomColor.mainlcolor; // Color for index 0
+      case 1:
+        return CustomColor.mainlcolor;
+      case 2:
+        return CustomColor.mainlcolor; // Color for index 2 (as before)
+      case 3:
+        return CustomColor.mainlcolor; // Slightly different color for index 3
+      case 4:
+        return CustomColor.mainlcolor;
+      default:
+        return CustomColor.mainlcolor;
+    }
+  }
 
   _middleButton(BuildContext context) {
     return CircleAvatar(
