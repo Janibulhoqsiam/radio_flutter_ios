@@ -31,12 +31,12 @@ class LiveStreamingController extends GetxController with DashboardService {
 
   void setVolume(double value) {
     setVolumeValue.value = value;
-    audioPlayer.setVolume(value);
+    audioPlayer?.setVolume(value);
   }
 
   RxBool isPlaying = false.obs;
   RxBool isPlayLoading = false.obs;
-  late AudioPlayer audioPlayer;
+  late AudioPlayer? audioPlayer;
 
   void playRadio() async {
     print('🔄 playRadio() called');
@@ -47,7 +47,7 @@ class LiveStreamingController extends GetxController with DashboardService {
     if (isPlaying.value==false) {
       print('▶️ Attempting to play audio...');
       try {
-        audioPlayer.play();
+        audioPlayer?.play();
         isPlaying.value = true;
         startUsageTimer();
 
@@ -58,7 +58,7 @@ class LiveStreamingController extends GetxController with DashboardService {
     } else {
       print('⏹ Attempting to stop audio...');
       isPlaying.value = false;
-      audioPlayer.stop();
+      audioPlayer?.stop();
       stopUsageTimer();
       print('🛑 Audio stopped');
     }
@@ -72,9 +72,9 @@ class LiveStreamingController extends GetxController with DashboardService {
 
   void startUsageTimer() {
     _usageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final duration = audioPlayer.position; // Use position instead of duration
-      final seconds = duration.inSeconds;
-      final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
+      final duration = audioPlayer?.position; // Use position instead of duration
+      final seconds = duration?.inSeconds;
+      final mb = (assumedBitrateKbps * seconds!) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
     });
   }
@@ -88,7 +88,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   @override
   void dispose() {
     super.dispose();
-    audioPlayer.dispose();
+    audioPlayer?.dispose();
     if (_usageTimer.isActive) {
       _usageTimer.cancel();
     }
@@ -150,8 +150,8 @@ class LiveStreamingController extends GetxController with DashboardService {
       update();
 
       // Future<void> _init() async{
-      await audioPlayer.setLoopMode(LoopMode.all);
-      await audioPlayer.setAudioSource(playlist);
+      await audioPlayer?.setLoopMode(LoopMode.all);
+      await audioPlayer?.setAudioSource(playlist);
 
       // }
     }).catchError((onError) {
