@@ -4,7 +4,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 120
     integrations:
-      app_store_connect: codemagic
+      app_store_connect: Apintie_
     environment:
       ios_signing:
         distribution_type: app_store
@@ -36,7 +36,7 @@ workflows:
         script: |
           # See the following link about getting the latest App Store or TestFlight version - https://docs.codemagic.io/knowledge-codemagic/build-versioning/#app-store-or-testflight-latest-build-number
           flutter build ipa --release \
-            --build-name=5.0.0 \
+            --build-name=5.0.1 \
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1)) \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
@@ -66,6 +66,7 @@ workflows:
         submit_to_testflight: false
         beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
           - App Store Connect Users
+          - Apintie 2.0.0 Testers
 
         # Configuration related to App Store (optional)
         # Note: This action is performed during post-processing.
