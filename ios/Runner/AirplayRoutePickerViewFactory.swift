@@ -1,6 +1,7 @@
 import Foundation
 import MediaPlayer
 import Flutter
+import AVKit
 
 class AirplayRoutePickerViewFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
