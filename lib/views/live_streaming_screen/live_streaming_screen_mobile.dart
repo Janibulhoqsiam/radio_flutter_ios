@@ -7,11 +7,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../../controller/ radio_controller.dart';
 import '../../controller/banner_ad_controller.dart';
 import '../../controller/live_streaming_controller/live_streaming_controller.dart';
 import '../../custom_assets/assets.gen.dart';
 import '../../utils/basic_screen_imports.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import 'package:flutter/material.dart';
 
 class LiveStreamingScreenMobile extends StatelessWidget {
   LiveStreamingScreenMobile({super.key, required this.controller});
@@ -149,16 +152,35 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                     children: [
                       verticalSpace(MediaQuery.sizeOf(context).height * .02),
                       TitleHeading1Widget(
-                        text: controller.liveShowModel.data.schedule.first.name,
+                        text:  radioController.title,
                         color: CustomColor.whiteColor,
                         fontWeight: FontWeight.w700,
                       ).paddingOnly(
                           bottom: Dimensions.paddingVerticalSize * 0.1),
                       TitleHeading5Widget(
-                        text: controller.liveShowModel.data.schedule.first.host,
+                        text:  radioController.artist,
                         color: CustomColor.whiteColor.withOpacity(.40),
                         fontWeight: FontWeight.w500,
-                      ).paddingOnly(bottom: Dimensions.marginSizeVertical * .1),
+                      ),
+
+                      IconButton(
+                        icon: Icon(
+                          Platform.isIOS ? Icons.airplay : Icons.cast,
+                          color: CustomColor.whiteColor,
+                        ),
+                        onPressed: () {
+                          if (Platform.isIOS) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => Dialog(child: AirPlayButton()),
+                            );
+                          } else if (Platform.isAndroid) {
+                            AudioCastPicker.show();
+                          }
+                        },
+                      ),
+
+
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -403,3 +425,41 @@ class _TopWaveClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
+
+
+
+
+class AirPlayButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    const String viewType = 'AirplayRoutePicker';
+    final Map<String, dynamic> creationParams = {};
+
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: UiKitView(
+        viewType: viewType,
+        creationParams: creationParams,
+        creationParamsCodec: StandardMessageCodec(),
+      ),
+    );
+  }
+}
+
+
+
+class AudioCastPicker {
+  static const MethodChannel _channel = MethodChannel('audio_cast_picker');
+
+  static Future<void> show() async {
+    try {
+      await _channel.invokeMethod('showCastPicker');
+    } on PlatformException catch (e) {
+      print("Failed to open cast picker: ${e.message}");
+    }
+  }
+}
+
+
+

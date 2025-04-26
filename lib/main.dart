@@ -1,4 +1,5 @@
 import 'package:dynamic_languages/dynamic_languages.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -11,19 +12,42 @@ import 'package:get/get.dart';
 
 import 'backend/services/api_endpoint.dart';
 import 'backend/utils/network_check/dependency_injection.dart';
+import 'controller/audio_handler.dart';
 import 'controller/settings/basic_settings_controller.dart';
 import 'backend/language/english.dart';
 
-Future<void> main() async {
+import 'package:audio_service/audio_service.dart';
+import 'package:rxdart/rxdart.dart'; // <- Add this package
+//
+// late MyAudioHandler audioHandler;
+// late final AudioPlayer audioPlayer;
 
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+
+
+  // audioPlayer = AudioPlayer();
+  // audioHandler = MyAudioHandler(audioPlayer);
+  //
+  // await AudioService.init(
+  //   builder: () => audioHandler,
+  //   config: AudioServiceConfig(
+  //     androidNotificationChannelId: 'com.ryanheise.audioservice.AudioService',
+  //     androidNotificationChannelName: 'Audio Playback',
+  //     androidNotificationOngoing: true,
+  //   ),
+  // );
+
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.audioservice.AudioService',
     androidNotificationChannelName: 'Audio Playback',
     androidNotificationOngoing: true
   );
+
+
+
 
 
 

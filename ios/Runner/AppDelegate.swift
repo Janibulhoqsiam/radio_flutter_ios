@@ -1,5 +1,7 @@
 import UIKit
 import Flutter
+import AVKit
+import MediaPlayer
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -10,13 +12,9 @@ import Flutter
 
   GeneratedPluginRegistrant.register(with:self)
 
-    // Ensure the plugin registrar is found
-//    if let registrar = self.registrar(forPlugin: "airplay_view") {
-//        let factory = AirPlayViewFactory(messenger: registrar.messenger())
-//        registrar.register(factory, withId: "airplay_view")
-//    } else {
-//        print("⚠️ Could not find plugin registrar for 'airplay_view'")
-//    }
+    let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+    let factory = AirplayRoutePickerViewFactory(messenger: controller.binaryMessenger)
+    registrar(forPlugin: "airplay_view")?.register(factory, withId: "AirplayRoutePicker")
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
