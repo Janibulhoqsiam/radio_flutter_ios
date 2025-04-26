@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../controller/ radio_controller.dart';
 import '../../controller/banner_ad_controller.dart';
@@ -187,41 +188,78 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // Left: Current position / Total duration
+                          // Padding(
+                          //   padding: EdgeInsets.only(right: 0.0),
+                          //   child: StreamBuilder<Duration>(
+                          //     stream: controller.audioPlayer.positionStream,
+                          //     builder: (context, positionSnapshot) {
+                          //       return StreamBuilder<Duration?>(
+                          //         stream: controller.audioPlayer.durationStream,
+                          //         builder: (context, durationSnapshot) {
+                          //           final position =
+                          //               positionSnapshot.data ?? Duration.zero;
+                          //           final duration =
+                          //               durationSnapshot.data ?? Duration.zero;
+                          //
+                          //           String twoDigits(int n) =>
+                          //               n.toString().padLeft(2, '0');
+                          //           String format(Duration d) =>
+                          //               "${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
+                          //
+                          //           final posText = format(position);
+                          //           // final durText = format(duration);
+                          //
+                          //           final durText = (duration == null ||
+                          //                   duration == Duration.zero)
+                          //               ? "LIVE"
+                          //               : format(duration);
+                          //
+                          //           return Text(
+                          //             "$posText / $durText",
+                          //             style: TextStyle(
+                          //               fontSize: 16.0,
+                          //               fontWeight: FontWeight.bold,
+                          //               color: CustomColor.whiteColor,
+                          //             ),
+                          //           );
+                          //         },
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
+
                           Padding(
-                            padding: EdgeInsets.only(right: 0.0),
-                            child: StreamBuilder<Duration>(
-                              stream: controller.audioPlayer.positionStream,
-                              builder: (context, positionSnapshot) {
-                                return StreamBuilder<Duration?>(
-                                  stream: controller.audioPlayer.durationStream,
-                                  builder: (context, durationSnapshot) {
-                                    final position =
-                                        positionSnapshot.data ?? Duration.zero;
-                                    final duration =
-                                        durationSnapshot.data ?? Duration.zero;
+                            padding: const EdgeInsets.only(right: 0.0),
+                            child: StreamBuilder<Object>(
+                              stream: controller.audioPlayer.positionStream.asyncMap((position) async {
+                                final duration = await controller.audioPlayer.durationStream.first;
+                                return (position, duration);
+                              }),
+                              builder: (context, snapshot) {
+                                final position = snapshot.hasData
+                                    ? (snapshot.data as (Duration, Duration?)).$1
+                                    : Duration.zero;
+                                final duration = snapshot.hasData
+                                    ? (snapshot.data as (Duration, Duration?)).$2
+                                    : Duration.zero;
 
-                                    String twoDigits(int n) =>
-                                        n.toString().padLeft(2, '0');
-                                    String format(Duration d) =>
-                                        "${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
+                                String twoDigits(int n) => n.toString().padLeft(2, '0');
+                                String format(Duration d) => d != null
+                                    ? "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}"
+                                    : "--:--";
 
-                                    final posText = format(position);
-                                    // final durText = format(duration);
+                                final posText = format(position);
+                                final durText = duration == null || duration == Duration.zero
+                                    ? "LIVE"
+                                    : format(duration);
 
-                                    final durText = (duration == null ||
-                                            duration == Duration.zero)
-                                        ? "LIVE"
-                                        : format(duration);
-
-                                    return Text(
-                                      "$posText / $durText",
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: CustomColor.whiteColor,
-                                      ),
-                                    );
-                                  },
+                                return Text(
+                                  "$posText / $durText",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: CustomColor.whiteColor,
+                                  ),
                                 );
                               },
                             ),
@@ -396,10 +434,16 @@ class LiveStreamingScreenMobile extends StatelessWidget {
   }
 }
 
+
+
+
 // 👇 Put this small clipper **inside the same file**, below your widget
 class _TopWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
+
+
+
     Path path = Path();
     path.lineTo(0, size.height * 0.75);
 

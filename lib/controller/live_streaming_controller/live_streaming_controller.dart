@@ -52,8 +52,8 @@ class LiveStreamingController extends GetxController with DashboardService {
       print('▶️ Attempting to play audio...');
       try {
         isPlaying.value = true;
-        await audioPlayer.play();
         startUsageTimer();
+        await audioPlayer.play();
         print('✅ Audio started playing');
       } catch (e) {
         print('❌ Error playing audio: $e');
@@ -61,8 +61,9 @@ class LiveStreamingController extends GetxController with DashboardService {
     } else {
       print('⏹ Attempting to stop audio...');
       isPlaying.value = false;
-      await audioPlayer.stop();
       stopUsageTimer();
+      await audioPlayer.stop();
+
       print('🛑 Audio stopped');
     }
 
@@ -89,7 +90,7 @@ class LiveStreamingController extends GetxController with DashboardService {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
-
+    audioPlayer.positionStream.listen((_) { /* no-op */ });
     String title = 'starting';
     String artist = "Connecting";
     songSubscription = songInfoStream().listen((text) async {
