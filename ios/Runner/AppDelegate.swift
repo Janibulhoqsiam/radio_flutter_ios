@@ -16,12 +16,6 @@ import MediaPlayer
   let factory = AirplayRoutePickerViewFactory(messenger: controller.binaryMessenger)
   registrar(forPlugin: "airplay_view")?.register(factory, withId: "AirplayRoutePicker")
 
-  do {
-     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-    try AVAudioSession.sharedInstance().setActive(true)
-  } catch {
-        print("Failed to set audio session category.")
-   }
 
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
