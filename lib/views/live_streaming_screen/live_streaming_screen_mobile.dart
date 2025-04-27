@@ -35,15 +35,22 @@ class LiveStreamingScreenMobile extends StatelessWidget {
   _bodyWidget(BuildContext context) {
     bannerAdController.loadInterstitialAd();
     bannerAdController.loadBannerAd();
-    return Obx(() => SizedBox(
-          height: MediaQuery.of(context).size.height,
+    return Obx(() =>
+        SizedBox(
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
           child: Container(
             color: CustomColor.mainlcolor,
             child: Stack(
               children: [
                 // Top background design
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.30,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.30,
                   decoration: const BoxDecoration(
                     color: Color(0xFF1557AC),
                     borderRadius: BorderRadius.only(
@@ -56,7 +63,10 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                       ClipPath(
                         clipper: _TopWaveClipper(),
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.30,
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * 0.30,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
@@ -87,7 +97,10 @@ class LiveStreamingScreenMobile extends StatelessWidget {
     String image = Assets.clipart.streaminglogo.path;
 
     double size =
-        MediaQuery.of(context).size.width * 0.65; // 50% of screen width
+        MediaQuery
+            .of(context)
+            .size
+            .width * 0.65; // 50% of screen width
 
     return Center(
       child: SizedBox(
@@ -137,296 +150,301 @@ class LiveStreamingScreenMobile extends StatelessWidget {
 
   _playerWidget(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.99,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      height: MediaQuery
+          .of(context)
+          .size
+          .height * 0.99,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: crossCenter,
           mainAxisAlignment: mainStart,
           children: [
-            verticalSpace(MediaQuery.sizeOf(context).height * .15),
+            verticalSpace(MediaQuery.sizeOf(context).height * 0.125),
             _carouselSliderWidget(context),
             // verticalSpace(Dimensions.paddingVerticalSize * .5),
             controller.liveShowModel.data.schedule.isEmpty
                 ? const SizedBox.shrink()
                 : Column(
-                    children: [
-                      verticalSpace(MediaQuery.sizeOf(context).height * .02),
-                      TitleHeading1Widget(
-                        text:  radioController.title,
-                        color: CustomColor.whiteColor,
-                        fontWeight: FontWeight.w700,
-                      ).paddingOnly(
-                          bottom: Dimensions.paddingVerticalSize * 0.1),
-                      TitleHeading5Widget(
-                        text:  radioController.artist,
-                        color: CustomColor.whiteColor.withOpacity(.40),
-                        fontWeight: FontWeight.w500,
-                      ),
+              children: [
+                verticalSpace(MediaQuery
+                    .sizeOf(context)
+                    .height * .02),
+                TitleHeading1Widget(
+                  text: radioController.title,
+                  color: CustomColor.whiteColor,
+                  fontWeight: FontWeight.w700,
+                ).paddingOnly(
+                    bottom: Dimensions.paddingVerticalSize * 0.1),
+                TitleHeading5Widget(
+                  text: radioController.artist,
+                  color: CustomColor.whiteColor.withOpacity(.40),
+                  fontWeight: FontWeight.w500,
+                ),
 
-                      IconButton(
-                        icon: Icon(
-                          Platform.isIOS ? Icons.airplay : Icons.cast,
-                          color: CustomColor.whiteColor,
-                        ),
-                        onPressed: () {
-                          if (Platform.isIOS) {
-                            showDialog(
-                              context: context,
-                              builder: (context) => Dialog(child: AirPlayButton()),
-                            );
-                          } else if (Platform.isAndroid) {
-                            AudioCastPicker.show();
-                          }
+                IconButton(
+                  icon: Icon(
+                    Platform.isIOS ? Icons.airplay : Icons.cast,
+                    color: CustomColor.whiteColor,
+                  ),
+                  onPressed: () {
+                    if (Platform.isIOS) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(child: AirPlayButton()),
+                      );
+                    } else if (Platform.isAndroid) {
+                      AudioCastPicker.show();
+                    }
+                  },
+                ),
+
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 0.8),
+                      child: StreamBuilder<Duration>(
+                        stream: controller.audioPlayer.positionStream,
+                        builder: (context, snapshot) {
+                          final position = snapshot.data ?? Duration.zero;
+                          final duration = controller.audioPlayer.duration ?? Duration.zero;
+
+                          String twoDigits(int n) => n.toString().padLeft(2, '0');
+                          String format(Duration d) =>
+                              "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
+
+                          final posText = format(position);
+                          final durText = duration == Duration.zero ? "LIVE" : format(duration);
+
+                          return Text(
+                            "$posText / $durText",
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: CustomColor.whiteColor,
+                            ),
+                          );
                         },
                       ),
 
 
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Left: Current position / Total duration
-                          // Padding(
-                          //   padding: EdgeInsets.only(right: 0.0),
-                          //   child: StreamBuilder<Duration>(
-                          //     stream: controller.audioPlayer.positionStream,
-                          //     builder: (context, positionSnapshot) {
-                          //       return StreamBuilder<Duration?>(
-                          //         stream: controller.audioPlayer.durationStream,
-                          //         builder: (context, durationSnapshot) {
-                          //           final position =
-                          //               positionSnapshot.data ?? Duration.zero;
-                          //           final duration =
-                          //               durationSnapshot.data ?? Duration.zero;
-                          //
-                          //           String twoDigits(int n) =>
-                          //               n.toString().padLeft(2, '0');
-                          //           String format(Duration d) =>
-                          //               "${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
-                          //
-                          //           final posText = format(position);
-                          //           // final durText = format(duration);
-                          //
-                          //           final durText = (duration == null ||
-                          //                   duration == Duration.zero)
-                          //               ? "LIVE"
-                          //               : format(duration);
-                          //
-                          //           return Text(
-                          //             "$posText / $durText",
-                          //             style: TextStyle(
-                          //               fontSize: 16.0,
-                          //               fontWeight: FontWeight.bold,
-                          //               color: CustomColor.whiteColor,
-                          //             ),
-                          //           );
-                          //         },
-                          //       );
-                          //     },
-                          //   ),
-                          // ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(right: 0.0),
-                            child: StreamBuilder<Object>(
-                              stream: controller.audioPlayer.positionStream.asyncMap((position) async {
-                                final duration = await controller.audioPlayer.durationStream.first;
-                                return (position, duration);
-                              }),
-                              builder: (context, snapshot) {
-                                final position = snapshot.hasData
-                                    ? (snapshot.data as (Duration, Duration?)).$1
-                                    : Duration.zero;
-                                final duration = snapshot.hasData
-                                    ? (snapshot.data as (Duration, Duration?)).$2
-                                    : Duration.zero;
-
-                                String twoDigits(int n) => n.toString().padLeft(2, '0');
-                                String format(Duration d) => d != null
-                                    ? "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}"
-                                    : "--:--";
-
-                                final posText = format(position);
-                                final durText = duration == null || duration == Duration.zero
-                                    ? "LIVE"
-                                    : format(duration);
-
-                                return Text(
-                                  "$posText / $durText",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: CustomColor.whiteColor,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-
-                          // Center: Play/Pause Button with Circular Indicator
-                          Padding(
-                            padding: EdgeInsets.only(
-                              bottom: Dimensions.paddingVerticalSize * .0,
-                            ),
-                            child: CircleAvatar(
-                              radius: Dimensions.radius * 5.8,
-                              backgroundColor: CustomColor.primaryLightColor
-                                  .withOpacity(.04),
-                              child: CircleAvatar(
-                                radius: Dimensions.radius * 4.5,
-                                backgroundColor: CustomColor.whiteColor
-                                    .withOpacity(.06),
-                                child: Obx(() => CircularPercentIndicator(
-                                      radius: Dimensions.radius * 3.8,
-                                      arcType: ArcType.FULL,
-                                      backgroundColor: CustomColor.mainlcolor,
-                                      progressColor:
-                                          // CustomColor.progresstrokeColor,
-                                          CustomColor.whiteColor.withOpacity(.40),
-                                      animation: true,
-                                      percent: controller.isPlayLoading.value
-                                          ? 1
-                                          : controller.isPlaying.value
-                                              ? 1
-                                              : 0.2,
-                                      animationDuration: 2000,
-                                      center: CircleAvatar(
-                                        radius: Dimensions.radius * 3.5,
-                                        backgroundColor: CustomColor.whiteColor,
-                                        child: Center(
-                                          child: IconButton(
-                                            onPressed: () {
-                                              controller.playRadio();
-                                              if(bannerAdController.interstitialAd == null ){
-                                                if(controller.isPlaying.value==true){
-                                                  bannerAdController.loadInterstitialAd();
-                                                  bannerAdController.showInterstitialAd();
-                                                }
-
-                                              }else{
-                                                if(controller.isPlaying.value==true){
-                                                  bannerAdController.showInterstitialAd();
-                                                }
-                                              }
-
-                                            },
-                                            icon: Icon(
-                                              controller.isPlaying.value == true
-                                                  ? Icons.pause
-                                                  : Icons.play_arrow,
-                                              color:
-                                                  CustomColor.mainlcolor,
-                                              size: MediaQuery.sizeOf(context)
-                                                      .width * .08,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )),
-                              ),
-                            ),
-                          ),
 
 
-
-                          // Right: Bitrate (64kbps)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 0),
-                            child: Text(
-                              controller.dataUsage.value, // e.g., "64kbps"
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: CustomColor.whiteColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // TitleHeading5Widget(
-                      //   text: controller.liveShowModel.data.schedule.first.description,
-                      //   color:
-                      //   CustomColor.whiteColor.withOpacity(.70),
-                      //   fontWeight: FontWeight.w700,
+                      // child: StreamBuilder<Object>(
+                      //   stream: controller.audioPlayer.positionStream.asyncMap((
+                      //       position) async {
+                      //     final duration = await controller.audioPlayer
+                      //         .durationStream.first;
+                      //     return (position, duration);
+                      //   }),
+                      //   builder: (context, snapshot) {
+                      //     final position = snapshot.hasData
+                      //         ? (snapshot.data as (Duration, Duration?)).$1
+                      //         : Duration.zero;
+                      //     final duration = snapshot.hasData
+                      //         ? (snapshot.data as (Duration, Duration?)).$2
+                      //         : Duration.zero;
+                      //
+                      //     String twoDigits(int n) =>
+                      //         n.toString().padLeft(2, '0');
+                      //     String format(Duration d) =>
+                      //         d != null
+                      //             ? "${twoDigits(d.inMinutes)}:${twoDigits(
+                      //             d.inSeconds.remainder(60))}"
+                      //             : "--:--";
+                      //
+                      //     final posText = format(position);
+                      //     final durText = duration == null ||
+                      //         duration == Duration.zero
+                      //         ? "LIVE"
+                      //         : format(duration);
+                      //
+                      //     return Text(
+                      //       "$posText / $durText",
+                      //       style: TextStyle(
+                      //         fontSize: 16.0,
+                      //         fontWeight: FontWeight.bold,
+                      //         color: CustomColor.whiteColor,
+                      //       ),
+                      //     );
+                      //   },
                       // ),
+                    ),
 
-                      SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Title
-                            TitleHeading5Widget(
-                              text: controller.liveShowModel.data.schedule.first
-                                  .description,
-                              color: CustomColor.whiteColor.withOpacity(.70),
-                              fontWeight: FontWeight.w700,
-                            ),
-
-                            // Banner Ad (No Gaps)
-                            if (bannerAdControllerF.bannerAd != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                // adjust/remove padding if needed
-                                child: Center(
-                                  child: SizedBox(
-                                    width: bannerAdControllerF
-                                        .bannerAd!.size.width
-                                        .toDouble(),
-                                    height: bannerAdControllerF
-                                        .bannerAd!.size.height
-                                        .toDouble(),
-                                    child: AdWidget(
-                                        ad: bannerAdControllerF.bannerAd!),
+                    // Center: Play/Pause Button with Circular Indicator
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: Dimensions.paddingVerticalSize * .0,
+                      ),
+                      child: CircleAvatar(
+                        radius: Dimensions.radius * 5.8,
+                        backgroundColor: CustomColor.primaryLightColor
+                            .withOpacity(.04),
+                        child: CircleAvatar(
+                          radius: Dimensions.radius * 4.5,
+                          backgroundColor: CustomColor.whiteColor
+                              .withOpacity(.06),
+                          child: Obx(() =>
+                              CircularPercentIndicator(
+                                radius: Dimensions.radius * 3.8,
+                                arcType: ArcType.FULL,
+                                backgroundColor: CustomColor.mainlcolor,
+                                progressColor:
+                                // CustomColor.progresstrokeColor,
+                                CustomColor.whiteColor.withOpacity(.40),
+                                animation: true,
+                                percent: controller.isPlayLoading.value
+                                    ? 1
+                                    : controller.isPlaying.value
+                                    ? 1
+                                    : 0.2,
+                                animationDuration: 2000,
+                                center: CircleAvatar(
+                                  radius: Dimensions.radius * 3.5,
+                                  backgroundColor: CustomColor.whiteColor,
+                                  child: Center(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        controller.playRadio();
+                                        if (bannerAdController.interstitialAd ==
+                                            null) {
+                                          if (controller.isPlaying.value ==
+                                              true) {
+                                            bannerAdController
+                                                .loadInterstitialAd();
+                                            bannerAdController
+                                                .showInterstitialAd();
+                                          }
+                                        } else {
+                                          if (controller.isPlaying.value ==
+                                              true) {
+                                            bannerAdController
+                                                .showInterstitialAd();
+                                          }
+                                        }
+                                      },
+                                      icon: Icon(
+                                        controller.isPlaying.value == true
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                        color:
+                                        CustomColor.mainlcolor,
+                                        size: MediaQuery
+                                            .sizeOf(context)
+                                            .width * .08,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                              )),
                         ),
                       ),
+                    ),
 
-                      // Obx(
-                      //   () => Container(
-                      //     margin: EdgeInsets.only(
-                      //       left: Dimensions.marginSizeHorizontal,
-                      //       right: Dimensions.marginSizeHorizontal,
-                      //       // bottom: Dimensions.heightSize * 10
-                      //     ),
-                      //     child: Row(
-                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //       children: [
-                      //         Icon(
-                      //           Icons.volume_off,
-                      //           color: CustomColor.primaryLightColor
-                      //               .withOpacity(.4),
-                      //         ),
-                      //         Expanded(
-                      //           child: Slider(
-                      //             value: controller.setVolumeValue.value,
-                      //             min: 0.0,
-                      //             max: 1.0,
-                      //             activeColor: CustomColor.primaryLightColor,
-                      //             inactiveColor: CustomColor.primaryLightColor
-                      //                 .withOpacity(.2),
-                      //             onChanged: (double value) {
-                      //               debugPrint(value.toString());
-                      //               controller.setVolume(value);
-                      //             },
-                      //           ),
-                      //         ),
-                      //         Icon(
-                      //           Icons.volume_up,
-                      //           color: CustomColor.primaryLightColor,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // verticalSpace(10),
+
+                    // Right: Bitrate (64kbps)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 0),
+                      child: Text(
+                        controller.dataUsage.value, // e.g., "64kbps"
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                          color: CustomColor.whiteColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // TitleHeading5Widget(
+                //   text: controller.liveShowModel.data.schedule.first.description,
+                //   color:
+                //   CustomColor.whiteColor.withOpacity(.70),
+                //   fontWeight: FontWeight.w700,
+                // ),
+
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Title
+                      TitleHeading5Widget(
+                        text: controller.liveShowModel.data.schedule.first
+                            .description,
+                        color: CustomColor.whiteColor.withOpacity(.70),
+                        fontWeight: FontWeight.w700,
+                      ),
+
+                      // Banner Ad (No Gaps)
+                      if (bannerAdControllerF.bannerAd != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          // adjust/remove padding if needed(
+                          child: Center(
+                            child: SizedBox(
+                              width: bannerAdControllerF
+                                  .bannerAd!.size.width
+                                  .toDouble(),
+                              height: bannerAdControllerF
+                                  .bannerAd!.size.height
+                                  .toDouble(),
+                              child: AdWidget(
+                                  ad: bannerAdControllerF.bannerAd!),
+                            ),
+                          ),
+                        ),
                     ],
-                  )
+                  ),
+                ),
+
+                // Obx(
+                //   () => Container(
+                //     margin: EdgeInsets.only(
+                //       left: Dimensions.marginSizeHorizontal,
+                //       right: Dimensions.marginSizeHorizontal,
+                //       // bottom: Dimensions.heightSize * 10
+                //     ),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Icon(
+                //           Icons.volume_off,
+                //           color: CustomColor.primaryLightColor
+                //               .withOpacity(.4),
+                //         ),
+                //         Expanded(
+                //           child: Slider(
+                //             value: controller.setVolumeValue.value,
+                //             min: 0.0,
+                //             max: 1.0,
+                //             activeColor: CustomColor.primaryLightColor,
+                //             inactiveColor: CustomColor.primaryLightColor
+                //                 .withOpacity(.2),
+                //             onChanged: (double value) {
+                //               debugPrint(value.toString());
+                //               controller.setVolume(value);
+                //             },
+                //           ),
+                //         ),
+                //         Icon(
+                //           Icons.volume_up,
+                //           color: CustomColor.primaryLightColor,
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // verticalSpace(10),
+              ],
+            )
           ],
         ),
       ),
@@ -435,15 +453,10 @@ class LiveStreamingScreenMobile extends StatelessWidget {
 }
 
 
-
-
 // 👇 Put this small clipper **inside the same file**, below your widget
 class _TopWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-
-
-
     Path path = Path();
     path.lineTo(0, size.height * 0.75);
 
@@ -471,8 +484,6 @@ class _TopWaveClipper extends CustomClipper<Path> {
 }
 
 
-
-
 class AirPlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -490,7 +501,6 @@ class AirPlayButton extends StatelessWidget {
     );
   }
 }
-
 
 
 class AudioCastPicker {

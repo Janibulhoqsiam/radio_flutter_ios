@@ -72,11 +72,19 @@ class LiveStreamingController extends GetxController with DashboardService {
   }
 
   void startUsageTimer() {
-    _usageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final seconds = audioPlayer.position.inSeconds;
+    // _usageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    //   final seconds = audioPlayer.position.inSeconds;
+    //   final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
+    //   dataUsage.value = "${mb.toStringAsFixed(2)} MB";
+    // });
+
+    audioPlayer.positionStream.listen((position) {
+      final seconds = position.inSeconds;
       final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
     });
+
+
   }
 
   void stopUsageTimer() {
