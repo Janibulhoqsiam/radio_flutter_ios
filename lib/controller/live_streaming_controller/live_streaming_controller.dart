@@ -88,6 +88,8 @@ class LiveStreamingController extends GetxController with DashboardService {
       final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
     });
+
+
   }
 
   void stopUsageTimer() {

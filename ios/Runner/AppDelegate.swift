@@ -3,7 +3,8 @@ import Flutter
 import AVKit
 import MediaPlayer
 
-@UIApplicationMain
+
+@main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
