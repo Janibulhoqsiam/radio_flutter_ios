@@ -10,6 +10,11 @@ import '../../main.dart';
 import '../../utils/basic_screen_imports.dart';
 import 'package:audio_service/audio_service.dart';
 
+
+import 'package:rxdart/rxdart.dart' as rxd;
+import 'package:get/get.dart'; // Or wherever your Get imports are
+
+
 class LiveStreamingController extends GetxController with DashboardService {
   var setVolumeValue = 1.0.obs;
   final currentBitrate = "00kbps".obs;
@@ -72,8 +77,14 @@ class LiveStreamingController extends GetxController with DashboardService {
   }
 
   void startUsageTimer() {
-    _usageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final seconds = audioPlayer.position.inSeconds;
+    // _usageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    //   final seconds = audioPlayer.position.inSeconds;
+    //   final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
+    //   dataUsage.value = "${mb.toStringAsFixed(2)} MB";
+    // });
+
+    audioPlayer.positionStream.listen((position) {
+      final seconds = position.inSeconds;
       final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
     });
@@ -85,12 +96,36 @@ class LiveStreamingController extends GetxController with DashboardService {
     }
   }
 
+  // Stream<PositionData> get PositionDataStream =>
+  //     rxd.Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+  //       audioPlayer.positionStream,
+  //       audioPlayer.bufferedPositionStream,
+  //       audioPlayer.durationStream,
+  //       (position, bufferedPosition, duration) => PositionData(
+  //         position,
+  //         bufferedPosition,
+  //         duration ?? Duration.zero,
+  //       ),
+  //     );
+
+
+
+  Stream<PositionData> get PositionDataStream =>
+      rxd.Rx.combineLatest2<Duration, Duration, PositionData>(
+        audioPlayer.positionStream,
+        audioPlayer.bufferedPositionStream,
+            (position, buffered) => PositionData(position, buffered, Duration.zero),
+      );
+
+
   @override
   void onInit() {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
-    audioPlayer.positionStream.listen((_) { /* no-op */ });
+    audioPlayer.positionStream.listen((_) {
+      /* no-op */
+    });
     String title = 'starting';
     String artist = "Connecting";
     songSubscription = songInfoStream().listen((text) async {
@@ -143,6 +178,10 @@ class LiveStreamingController extends GetxController with DashboardService {
         children: [
           AudioSource.uri(
             Uri.parse(radioUrl.value),
+            headers: {
+              'User-Agent': 'Apintie App/5.0',
+              // Replace 1.0 with your app's version
+            },
             tag: MediaItem(
               id: radioId.value,
               title: radioTitle.value,
@@ -182,7 +221,6 @@ class LiveStreamingController extends GetxController with DashboardService {
       //   update();
       //   print("Received data without delay: $text");
       // });
-
     }).catchError((onError) {
       log.e(onError);
     });
@@ -221,6 +259,10 @@ class LiveStreamingController extends GetxController with DashboardService {
             await audioPlayer.setAudioSource(
               AudioSource.uri(
                 Uri.parse("https://surilive.com:8000/stream"),
+                headers: {
+                  'User-Agent': 'Apintie App/5.0',
+                  // Replace 1.0 with your app's version
+                },
                 tag: MediaItem(
                     id: "1",
                     title: fetchedTitle,
@@ -245,4 +287,16 @@ class LiveStreamingController extends GetxController with DashboardService {
       print("Error fetching song info: $e");
     }
   }
+}
+
+class PositionData {
+  const PositionData(
+    this.position,
+    this.bufferedPosition,
+    this.duration,
+  );
+
+  final Duration position;
+  final Duration bufferedPosition;
+  final Duration duration;
 }

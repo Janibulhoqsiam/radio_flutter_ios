@@ -144,20 +144,20 @@ class LiveStreamingScreenMobile extends StatelessWidget {
           crossAxisAlignment: crossCenter,
           mainAxisAlignment: mainStart,
           children: [
-            verticalSpace(MediaQuery.sizeOf(context).height * .15),
+            verticalSpace(MediaQuery.sizeOf(context).height * .125),
             _carouselSliderWidget(context),
             // verticalSpace(Dimensions.paddingVerticalSize * .5),
             controller.liveShowModel.data.schedule.isEmpty
                 ? const SizedBox.shrink()
                 : Column(
                     children: [
-                      verticalSpace(MediaQuery.sizeOf(context).height * .02),
+
                       TitleHeading1Widget(
                         text:  radioController.title,
                         color: CustomColor.whiteColor,
                         fontWeight: FontWeight.w700,
                       ).paddingOnly(
-                          bottom: Dimensions.paddingVerticalSize * 0.1),
+                          bottom: Dimensions.paddingVerticalSize * 0.001),
                       TitleHeading5Widget(
                         text:  radioController.artist,
                         color: CustomColor.whiteColor.withOpacity(.40),
@@ -187,75 +187,24 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Left: Current position / Total duration
-                          // Padding(
-                          //   padding: EdgeInsets.only(right: 0.0),
-                          //   child: StreamBuilder<Duration>(
-                          //     stream: controller.audioPlayer.positionStream,
-                          //     builder: (context, positionSnapshot) {
-                          //       return StreamBuilder<Duration?>(
-                          //         stream: controller.audioPlayer.durationStream,
-                          //         builder: (context, durationSnapshot) {
-                          //           final position =
-                          //               positionSnapshot.data ?? Duration.zero;
-                          //           final duration =
-                          //               durationSnapshot.data ?? Duration.zero;
-                          //
-                          //           String twoDigits(int n) =>
-                          //               n.toString().padLeft(2, '0');
-                          //           String format(Duration d) =>
-                          //               "${twoDigits(d.inMinutes.remainder(60))}:${twoDigits(d.inSeconds.remainder(60))}";
-                          //
-                          //           final posText = format(position);
-                          //           // final durText = format(duration);
-                          //
-                          //           final durText = (duration == null ||
-                          //                   duration == Duration.zero)
-                          //               ? "LIVE"
-                          //               : format(duration);
-                          //
-                          //           return Text(
-                          //             "$posText / $durText",
-                          //             style: TextStyle(
-                          //               fontSize: 16.0,
-                          //               fontWeight: FontWeight.bold,
-                          //               color: CustomColor.whiteColor,
-                          //             ),
-                          //           );
-                          //         },
-                          //       );
-                          //     },
-                          //   ),
-                          // ),
-
                           Padding(
                             padding: const EdgeInsets.only(right: 0.0),
-                            child: StreamBuilder<Object>(
-                              stream: controller.audioPlayer.positionStream.asyncMap((position) async {
-                                final duration = await controller.audioPlayer.durationStream.first;
-                                return (position, duration);
-                              }),
+                            child: StreamBuilder<PositionData>(
+                              stream: controller.PositionDataStream,
                               builder: (context, snapshot) {
-                                final position = snapshot.hasData
-                                    ? (snapshot.data as (Duration, Duration?)).$1
-                                    : Duration.zero;
-                                final duration = snapshot.hasData
-                                    ? (snapshot.data as (Duration, Duration?)).$2
-                                    : Duration.zero;
+                                final positionData = snapshot.data;
+                                final duration = controller.audioPlayer.duration ?? Duration.zero;
 
                                 String twoDigits(int n) => n.toString().padLeft(2, '0');
-                                String format(Duration d) => d != null
-                                    ? "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}"
-                                    : "--:--";
+                                String format(Duration d) =>
+                                    "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
 
-                                final posText = format(position);
-                                final durText = duration == null || duration == Duration.zero
-                                    ? "LIVE"
-                                    : format(duration);
+                                final posText = format(positionData!.position);
+                                final durText = duration == Duration.zero ? "LIVE" : format(positionData.duration);
 
                                 return Text(
                                   "$posText / $durText",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                     color: CustomColor.whiteColor,
@@ -263,13 +212,50 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                                 );
                               },
                             ),
+
+
+
+
+
+
+                            // child: StreamBuilder<Object>(
+                            //   stream: controller.audioPlayer.positionStream.asyncMap((position) async {
+                            //     final duration = await controller.audioPlayer.durationStream.first;
+                            //     return (position, duration);
+                            //   }),
+                            //   builder: (context, snapshot) {
+                            //     final position = snapshot.hasData
+                            //         ? (snapshot.data as (Duration, Duration?)).$1
+                            //         : Duration.zero;
+                            //     final duration = snapshot.hasData
+                            //         ? (snapshot.data as (Duration, Duration?)).$2
+                            //         : Duration.zero;
+                            //
+                            //     String twoDigits(int n) => n.toString().padLeft(2, '0');
+                            //     String format(Duration d) => d != null
+                            //         ? "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}"
+                            //         : "--:--";
+                            //
+                            //     final posText = format(position);
+                            //     final durText = duration == null || duration == Duration.zero
+                            //         ? "LIVE"
+                            //         : format(duration);
+                            //
+                            //     return Text(
+                            //       "$posText / $durText",
+                            //       style: TextStyle(
+                            //         fontSize: 16.0,
+                            //         fontWeight: FontWeight.bold,
+                            //         color: CustomColor.whiteColor,
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                           ),
 
                           // Center: Play/Pause Button with Circular Indicator
                           Padding(
-                            padding: EdgeInsets.only(
-                              bottom: Dimensions.paddingVerticalSize * .0,
-                            ),
+                            padding: const EdgeInsets.only(left: 10.0),
                             child: CircleAvatar(
                               radius: Dimensions.radius * 5.8,
                               backgroundColor: CustomColor.primaryLightColor
