@@ -21,6 +21,7 @@ dependencies:
 #  audio_service: ^0.18.12
   rxdart: ^0.28.0
   audio_video_progress_bar: ^2.0.3
+  audio_session: ^0.2.1
 
   flutter_screenutil: 5.9.3
   font_awesome_flutter: ^10.8.0

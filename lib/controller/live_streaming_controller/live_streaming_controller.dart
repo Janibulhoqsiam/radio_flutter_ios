@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -120,11 +121,26 @@ class LiveStreamingController extends GetxController with DashboardService {
       );
 
 
+  /// A stream that emits only the current playback position.
+  Stream<Duration> get elapsedTimeStream => audioPlayer.positionStream;
+
+
+
+
+  Future<void> _init() async {
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration.music());
+
+  }
+
+
   @override
   void onInit() {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
+    _init();
+
     audioPlayer.positionStream.listen((_) {
       /* no-op */
     });
@@ -260,11 +276,13 @@ class LiveStreamingController extends GetxController with DashboardService {
           try {
             await audioPlayer.setAudioSource(
               AudioSource.uri(
-                Uri.parse("https://surilive.com:8000/stream"),
+                Uri.parse("https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3"),
                 headers: {
-                  'User-Agent': 'Apintie App/5.0',
-                  // Replace 1.0 with your app's version
+                  'User-Agent': 'Apintie App/5.0',      // your existing UA
+                  'Content-Type': 'audio/mpeg',         // hint iOS about the format
+                  'Range': 'bytes=0-',                  // force byte-range mode
                 },
+                
                 tag: MediaItem(
                     id: "1",
                     title: fetchedTitle,

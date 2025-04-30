@@ -189,19 +189,24 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(right: 0.0),
-                            child: StreamBuilder<PositionData>(
-                              stream: controller.PositionDataStream,
+                            child: StreamBuilder<Duration>(
+                              stream: controller.elapsedTimeStream,
                               builder: (context, snapshot) {
-                                final positionData = snapshot.data;
-                                final duration = controller.audioPlayer.duration ?? Duration.zero;
+                                // 1. Get the elapsed time (or zero if still null)
+                                final elapsed = snapshot.data ?? Duration.zero;
+                                // 2. Pull the total duration (null for a live stream)
+                                final total = controller.audioPlayer.duration;
 
+                                // Helpers for formatting mm:ss
                                 String twoDigits(int n) => n.toString().padLeft(2, '0');
                                 String format(Duration d) =>
                                     "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
 
-                                final posText = format(positionData!.position);
-                                final durText = duration == Duration.zero ? "LIVE" : format(positionData.duration);
+                                // 3. Build display strings
+                                final posText = format(elapsed);
+                                final durText = (total == null) ? "LIVE" : format(total);
 
+                                // 4. Render
                                 return Text(
                                   "$posText / $durText",
                                   style: const TextStyle(
@@ -212,6 +217,7 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                                 );
                               },
                             ),
+
 
 
 
