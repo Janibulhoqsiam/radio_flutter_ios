@@ -276,7 +276,7 @@ class LiveStreamingController extends GetxController with DashboardService {
           try {
             await audioPlayer.setAudioSource(
               AudioSource.uri(
-                Uri.parse("https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3"),
+                Uri.parse("https://npr-ice.streamguys1.com/live.mp3"),
                 headers: {
                   'User-Agent': 'Apintie App/5.0',      // your existing UA
                   'Content-Type': 'audio/mpeg',         // hint iOS about the format
