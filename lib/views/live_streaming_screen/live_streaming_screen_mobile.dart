@@ -183,189 +183,236 @@ class LiveStreamingScreenMobile extends StatelessWidget {
 
 
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   children: [
+                      //     Padding(
+                      //       padding: const EdgeInsets.only(right: 0.0),
+                      //       child: StreamBuilder<Duration>(
+                      //         stream: controller.elapsedTimeStream,
+                      //         builder: (context, snapshot) {
+                      //           // 1. Get the elapsed time (or zero if still null)
+                      //           final elapsed = snapshot.data ?? Duration.zero;
+                      //           // 2. Pull the total duration (null for a live stream)
+                      //           final total = controller.audioPlayer.duration;
+                      //
+                      //           // Helpers for formatting mm:ss
+                      //           String twoDigits(int n) => n.toString().padLeft(2, '0');
+                      //           String format(Duration d) =>
+                      //               "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
+                      //
+                      //           // 3. Build display strings
+                      //           final posText = format(elapsed);
+                      //           final durText = (total == null) ? "LIVE" : format(total);
+                      //
+                      //           // 4. Render
+                      //           return Text(
+                      //             "$posText / $durText",
+                      //             style: const TextStyle(
+                      //               fontSize: 16.0,
+                      //               fontWeight: FontWeight.bold,
+                      //               color: CustomColor.whiteColor,
+                      //             ),
+                      //           );
+                      //         },
+                      //       ),
+                      //
+                      //     ),
+                      //
+                      //     // Center: Play/Pause Button with Circular Indicator
+                      //     Padding(
+                      //       padding: const EdgeInsets.only(right: 15.0),
+                      //       child: CircleAvatar(
+                      //         radius: Dimensions.radius * 5.8,
+                      //         backgroundColor: CustomColor.primaryLightColor
+                      //             .withOpacity(.04),
+                      //         child: CircleAvatar(
+                      //           radius: Dimensions.radius * 4.5,
+                      //           backgroundColor: CustomColor.whiteColor
+                      //               .withOpacity(.06),
+                      //           child: Obx(() => CircularPercentIndicator(
+                      //                 radius: Dimensions.radius * 3.8,
+                      //                 arcType: ArcType.FULL,
+                      //                 backgroundColor: CustomColor.mainlcolor,
+                      //                 progressColor:
+                      //                     // CustomColor.progresstrokeColor,
+                      //                     CustomColor.whiteColor.withOpacity(.40),
+                      //                 animation: true,
+                      //                 percent: controller.isPlayLoading.value
+                      //                     ? 1
+                      //                     : controller.isPlaying.value
+                      //                         ? 1
+                      //                         : 0.2,
+                      //                 animationDuration: 2000,
+                      //                 center: CircleAvatar(
+                      //                   radius: Dimensions.radius * 3.5,
+                      //                   backgroundColor: CustomColor.whiteColor,
+                      //                   child: Center(
+                      //                     child: IconButton(
+                      //                       onPressed: () {
+                      //                         controller.playRadio();
+                      //                         if(bannerAdController.interstitialAd == null ){
+                      //                           if(controller.isPlaying.value==true){
+                      //                             bannerAdController.loadInterstitialAd();
+                      //                             bannerAdController.showInterstitialAd();
+                      //                           }
+                      //
+                      //                         }else{
+                      //                           if(controller.isPlaying.value==true){
+                      //                             bannerAdController.showInterstitialAd();
+                      //                           }
+                      //                         }
+                      //
+                      //                       },
+                      //                       icon: Icon(
+                      //                         controller.isPlaying.value == true
+                      //                             ? Icons.pause
+                      //                             : Icons.play_arrow,
+                      //                         color:
+                      //                             CustomColor.mainlcolor,
+                      //                         size: MediaQuery.sizeOf(context)
+                      //                                 .width * .08,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               )),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //
+                      //
+                      //     // Right: Bitrate (64kbps)
+                      //     Padding(
+                      //       padding: EdgeInsets.only(left: 0),
+                      //       child: Text(
+                      //         controller.dataUsage.value, // e.g., "64kbps"
+                      //         style: TextStyle(
+                      //           fontSize: 16.0,
+                      //           fontWeight: FontWeight.bold,
+                      //           color: CustomColor.whiteColor,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+
+
+
+                      Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 0.0),
-                            // child: Obx(() {
-                            //   // 1. Get the elapsed time (using the reactive variable)
-                            //   final elapsed = controller.elapsedTime.value;
-                            //
-                            //   // 2. Pull the total duration (null for a live stream)
-                            //   final total = controller.audioPlayer.duration;
-                            //
-                            //   // Helpers for formatting mm:ss
-                            //   String twoDigits(int n) => n.toString().padLeft(2, '0');
-                            //   String format(Duration d) =>
-                            //       "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
-                            //
-                            //   // 3. Build display strings
-                            //   final posText = format(elapsed);
-                            //   final durText = (total == null) ? "LIVE" : format(total);
-                            //
-                            //   // 4. Render
-                            //   return Text(
-                            //     "$posText / $durText",
-                            //     style: const TextStyle(
-                            //       fontSize: 16.0,
-                            //       fontWeight: FontWeight.bold,
-                            //       color: CustomColor.whiteColor,
-                            //     ),
-                            //   );
-                            // }),
+                          // Background Row for side elements
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Left: Elapsed Time
+                              Padding(
+                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.10), // Dynamic left padding based on screen width
+                                child: StreamBuilder<Duration>(
+                                  stream: controller.elapsedTimeStream,
+                                  builder: (context, snapshot) {
+                                    final elapsed = snapshot.data ?? Duration.zero;
+                                    final total = controller.audioPlayer.duration;
 
+                                    String twoDigits(int n) => n.toString().padLeft(2, '0');
+                                    String format(Duration d) =>
+                                        "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
 
+                                    final posText = format(elapsed);
+                                    final durText = (total == null) ? "LIVE" : format(total);
 
-                            child: StreamBuilder<Duration>(
-                              stream: controller.elapsedTimeStream,
-                              builder: (context, snapshot) {
-                                // 1. Get the elapsed time (or zero if still null)
-                                final elapsed = snapshot.data ?? Duration.zero;
-                                // 2. Pull the total duration (null for a live stream)
-                                final total = controller.audioPlayer.duration;
+                                    return Text(
+                                      "$posText / $durText",
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: CustomColor.whiteColor,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
 
-                                // Helpers for formatting mm:ss
-                                String twoDigits(int n) => n.toString().padLeft(2, '0');
-                                String format(Duration d) =>
-                                    "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
+                              // Right: Data Usage
+                              Padding(
+                                padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15), // Dynamic left padding based on screen width
 
-                                // 3. Build display strings
-                                final posText = format(elapsed);
-                                final durText = (total == null) ? "LIVE" : format(total);
-
-                                // 4. Render
-                                return Text(
-                                  "$posText / $durText",
+                                child: Text(
+                                  controller.dataUsage.value,
                                   style: const TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                     color: CustomColor.whiteColor,
                                   ),
-                                );
-                              },
-                            ),
-
-
-
-
-
-
-
-                            // child: StreamBuilder<Object>(
-                            //   stream: controller.audioPlayer.positionStream.asyncMap((position) async {
-                            //     final duration = await controller.audioPlayer.durationStream.first;
-                            //     return (position, duration);
-                            //   }),
-                            //   builder: (context, snapshot) {
-                            //     final position = snapshot.hasData
-                            //         ? (snapshot.data as (Duration, Duration?)).$1
-                            //         : Duration.zero;
-                            //     final duration = snapshot.hasData
-                            //         ? (snapshot.data as (Duration, Duration?)).$2
-                            //         : Duration.zero;
-                            //
-                            //     String twoDigits(int n) => n.toString().padLeft(2, '0');
-                            //     String format(Duration d) => d != null
-                            //         ? "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}"
-                            //         : "--:--";
-                            //
-                            //     final posText = format(position);
-                            //     final durText = duration == null || duration == Duration.zero
-                            //         ? "LIVE"
-                            //         : format(duration);
-                            //
-                            //     return Text(
-                            //       "$posText / $durText",
-                            //       style: TextStyle(
-                            //         fontSize: 16.0,
-                            //         fontWeight: FontWeight.bold,
-                            //         color: CustomColor.whiteColor,
-                            //       ),
-                            //     );
-                            //   },
-                            // ),
+                                ),
+                              ),
+                            ],
                           ),
 
-                          // Center: Play/Pause Button with Circular Indicator
+                          // Center: Play/Pause Button
                           Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
                             child: CircleAvatar(
                               radius: Dimensions.radius * 5.8,
-                              backgroundColor: CustomColor.primaryLightColor
-                                  .withOpacity(.04),
+                              backgroundColor: CustomColor.primaryLightColor.withOpacity(.04),
                               child: CircleAvatar(
                                 radius: Dimensions.radius * 4.5,
-                                backgroundColor: CustomColor.whiteColor
-                                    .withOpacity(.06),
+                                backgroundColor: CustomColor.whiteColor.withOpacity(.06),
                                 child: Obx(() => CircularPercentIndicator(
-                                      radius: Dimensions.radius * 3.8,
-                                      arcType: ArcType.FULL,
-                                      backgroundColor: CustomColor.mainlcolor,
-                                      progressColor:
-                                          // CustomColor.progresstrokeColor,
-                                          CustomColor.whiteColor.withOpacity(.40),
-                                      animation: true,
-                                      percent: controller.isPlayLoading.value
-                                          ? 1
-                                          : controller.isPlaying.value
-                                              ? 1
-                                              : 0.2,
-                                      animationDuration: 2000,
-                                      center: CircleAvatar(
-                                        radius: Dimensions.radius * 3.5,
-                                        backgroundColor: CustomColor.whiteColor,
-                                        child: Center(
-                                          child: IconButton(
-                                            onPressed: () {
-                                              controller.playRadio();
-                                              if(bannerAdController.interstitialAd == null ){
-                                                if(controller.isPlaying.value==true){
-                                                  bannerAdController.loadInterstitialAd();
-                                                  bannerAdController.showInterstitialAd();
-                                                }
-
-                                              }else{
-                                                if(controller.isPlaying.value==true){
-                                                  bannerAdController.showInterstitialAd();
-                                                }
-                                              }
-
-                                            },
-                                            icon: Icon(
-                                              controller.isPlaying.value == true
-                                                  ? Icons.pause
-                                                  : Icons.play_arrow,
-                                              color:
-                                                  CustomColor.mainlcolor,
-                                              size: MediaQuery.sizeOf(context)
-                                                      .width * .08,
-                                            ),
-                                          ),
+                                  radius: Dimensions.radius * 3.8,
+                                  arcType: ArcType.FULL,
+                                  backgroundColor: CustomColor.mainlcolor,
+                                  progressColor: CustomColor.whiteColor.withOpacity(.40),
+                                  animation: true,
+                                  percent: controller.isPlayLoading.value
+                                      ? 1
+                                      : controller.isPlaying.value
+                                      ? 1
+                                      : 0.2,
+                                  animationDuration: 2000,
+                                  center: CircleAvatar(
+                                    radius: Dimensions.radius * 3.5,
+                                    backgroundColor: CustomColor.whiteColor,
+                                    child: Center(
+                                      child: IconButton(
+                                        onPressed: () {
+                                          controller.playRadio();
+                                          if (bannerAdController.interstitialAd == null) {
+                                            if (controller.isPlaying.value == true) {
+                                              bannerAdController.loadInterstitialAd();
+                                              bannerAdController.showInterstitialAd();
+                                            }
+                                          } else {
+                                            if (controller.isPlaying.value == true) {
+                                              bannerAdController.showInterstitialAd();
+                                            }
+                                          }
+                                        },
+                                        icon: Icon(
+                                          controller.isPlaying.value
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          color: CustomColor.mainlcolor,
+                                          size: MediaQuery.sizeOf(context).width * .08,
                                         ),
                                       ),
-                                    )),
-                              ),
-                            ),
-                          ),
-
-
-
-                          // Right: Bitrate (64kbps)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 0),
-                            child: Text(
-                              controller.dataUsage.value, // e.g., "64kbps"
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: CustomColor.whiteColor,
+                                    ),
+                                  ),
+                                )),
                               ),
                             ),
                           ),
                         ],
                       ),
+
+
+
+
+
+
+
 
                       // TitleHeading5Widget(
                       //   text: controller.liveShowModel.data.schedule.first.description,

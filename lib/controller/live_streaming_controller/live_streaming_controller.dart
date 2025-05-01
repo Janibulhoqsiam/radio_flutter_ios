@@ -38,7 +38,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   late Timer _usageTimer =
       Timer(Duration.zero, () {}); // prevent LateInit crash
   final RxString dataUsage = " 0.00 MB".obs;
-  final int assumedBitrateKbps = 64;
+  final int assumedBitrateKbps = 24;
 
   late final AudioPlayer audioPlayer; // Not nullable
 
@@ -81,20 +81,14 @@ class LiveStreamingController extends GetxController with DashboardService {
   }
 
   void startUsageTimer() {
-    // _usageTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-    //   final seconds = audioPlayer.position.inSeconds;
-    //   final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
-    //   dataUsage.value = "${mb.toStringAsFixed(2)} MB";
-    // });
 
     audioPlayer.positionStream.listen((position) {
       final seconds = position.inSeconds;
       final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
     });
-
-
   }
+
 
   void stopUsageTimer() {
     if (_usageTimer.isActive) {
@@ -158,7 +152,18 @@ class LiveStreamingController extends GetxController with DashboardService {
       _elapsed += const Duration(seconds: 1);
       print("Mimicked elapsed: $_elapsed");
       _elapsedTimeController.add(_elapsed);
+
+      // Update data usage
+      final seconds = _elapsed.inSeconds;
+      final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
+      dataUsage.value = "${mb.toStringAsFixed(2)} MB";
+
     });
+
+
+
+
+
   }
 
   /// Stop emitting time
