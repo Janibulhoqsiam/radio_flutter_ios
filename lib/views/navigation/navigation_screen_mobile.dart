@@ -266,8 +266,8 @@ class NavigationScreenMobile extends StatelessWidget {
                                         child: Icon(
                                           liveStreamingController
                                                   .isPlaying.value
-                                              ? Icons.play_arrow
-                                              : Icons.pause,
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
                                           color: CustomColor.primaryLightColor,
                                           size:
                                               MediaQuery.sizeOf(context).width *
@@ -427,6 +427,7 @@ class NavigationScreenMobile extends StatelessWidget {
               )),
           onTap: () {
             controller.selectedIndex.value = 2;
+            liveStreamingController.playRadio();
             debugPrint(
                 ">> Selected Index >> ${controller.selectedIndex.value}");
           },
