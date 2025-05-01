@@ -116,46 +116,23 @@ class LiveStreamingController extends GetxController with DashboardService {
 
 
   // final currentPosition = ValueNotifier<Duration>(Duration.zero);
-  // final _elapsedTimeController = StreamController<Duration>.broadcast();
 
+
+
+
+  // Rx<Duration> elapsedTime = Duration.zero.obs;  // Make the elapsed time reactive
   // Timer? _timer;
-
-
-
-  Rx<Duration> elapsedTime = Duration.zero.obs;  // Make the elapsed time reactive
-  Timer? _timer;
-
-  /// Start emitting elapsed time manually
-  void startElapsedTimeTracking() {
-    print("Starting elapsed time tracking..."); // DEBUG
-    _timer?.cancel(); // Cancel previous timer if any
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final position = audioPlayer.position;
-      print("Current position: $position"); // DEBUG
-
-      // Update the reactive variable
-      elapsedTime.value = position;
-    });
-  }
-
-  /// Stop emitting elapsed time
-  void stopElapsedTimeTracking() {
-    _timer?.cancel();
-    _timer = null;
-  }
-
-
-
-
-
-  /// Start emitting elapsed time manually
+  //
+  // /// Start emitting elapsed time manually
   // void startElapsedTimeTracking() {
   //   print("Starting elapsed time tracking..."); // DEBUG
   //   _timer?.cancel(); // Cancel previous timer if any
   //   _timer = Timer.periodic(const Duration(seconds: 1), (_) {
   //     final position = audioPlayer.position;
   //     print("Current position: $position"); // DEBUG
-  //     _elapsedTimeController.add(position);
+  //
+  //     // Update the reactive variable
+  //     elapsedTime.value = position;
   //   });
   // }
   //
@@ -166,8 +143,30 @@ class LiveStreamingController extends GetxController with DashboardService {
   // }
 
 
-  /// Custom stream to use in UI
-  // Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
+
+
+  final _elapsedTimeController = StreamController<Duration>.broadcast();
+  Timer? _timer;
+  /// Start emitting elapsed time manually
+  void startElapsedTimeTracking() {
+    print("Starting elapsed time tracking..."); // DEBUG
+    _timer?.cancel(); // Cancel previous timer if any
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final position = audioPlayer.position;
+      print("Current position: $position"); // DEBUG
+      _elapsedTimeController.add(position);
+    });
+  }
+
+  /// Stop emitting elapsed time
+  void stopElapsedTimeTracking() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+
+  // / Custom stream to use in UI
+  Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
 
 
   Stream<Duration> get safeElapsedTimeStream => Stream.periodic(
