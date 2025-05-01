@@ -321,7 +321,7 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                                         "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
 
                                     final posText = format(elapsed);
-                                    final durText = (total == null) ? "LIVE" : format(total);
+                                    final durText ="LIVE";
 
                                     return Text(
                                       "$posText / $durText",
