@@ -60,6 +60,7 @@ class LiveStreamingController extends GetxController with DashboardService {
       try {
         isPlaying.value = true;
         startElapsedTimeTracking();
+        startUsageTimer();
         await audioPlayer.play();
         print('✅ Audio started playing');
       } catch (e) {
@@ -69,6 +70,7 @@ class LiveStreamingController extends GetxController with DashboardService {
       print('⏹ Attempting to stop audio...');
       isPlaying.value = false;
       stopElapsedTimeTracking();
+      stopUsageTimer();
       await audioPlayer.stop();
 
       print('🛑 Audio stopped');
@@ -260,12 +262,12 @@ class LiveStreamingController extends GetxController with DashboardService {
           try {
             await audioPlayer.setAudioSource(
               AudioSource.uri(
-                Uri.parse("https://npr-ice.streamguys1.com/live.mp3"),
-                headers: {
-                  'User-Agent': 'Apintie App/5.0',      // your existing UA
-                  'Content-Type': 'audio/mpeg',         // hint iOS about the format
-                  'Range': 'bytes=0-',                  // force byte-range mode
-                },
+                Uri.parse("https://surilive.com:8000/stream"),
+                // headers: {
+                //   'User-Agent': 'Apintie App/5.0',      // your existing UA
+                //   'Content-Type': 'audio/mpeg',         // hint iOS about the format
+                //   'Range': 'bytes=0-',                  // force byte-range mode
+                // },
 
                 tag: MediaItem(
                     id: "1",
