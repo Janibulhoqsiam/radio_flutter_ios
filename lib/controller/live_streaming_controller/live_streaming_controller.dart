@@ -115,16 +115,26 @@ class LiveStreamingController extends GetxController with DashboardService {
   // Stream<Duration> get elapsedTimeStream => audioPlayer.positionStream;
 
 
+  // final currentPosition = ValueNotifier<Duration>(Duration.zero);
+  // final _elapsedTimeController = StreamController<Duration>.broadcast();
 
-  final _elapsedTimeController = StreamController<Duration>.broadcast();
+  // Timer? _timer;
+
+
+
+  Rx<Duration> elapsedTime = Duration.zero.obs;  // Make the elapsed time reactive
   Timer? _timer;
 
   /// Start emitting elapsed time manually
   void startElapsedTimeTracking() {
+    print("Starting elapsed time tracking..."); // DEBUG
     _timer?.cancel(); // Cancel previous timer if any
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       final position = audioPlayer.position;
-      _elapsedTimeController.add(position);
+      print("Current position: $position"); // DEBUG
+
+      // Update the reactive variable
+      elapsedTime.value = position;
     });
   }
 
@@ -134,9 +144,36 @@ class LiveStreamingController extends GetxController with DashboardService {
     _timer = null;
   }
 
-  /// Custom stream to use in UI
-  Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
 
+
+
+
+  /// Start emitting elapsed time manually
+  // void startElapsedTimeTracking() {
+  //   print("Starting elapsed time tracking..."); // DEBUG
+  //   _timer?.cancel(); // Cancel previous timer if any
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+  //     final position = audioPlayer.position;
+  //     print("Current position: $position"); // DEBUG
+  //     _elapsedTimeController.add(position);
+  //   });
+  // }
+  //
+  // /// Stop emitting elapsed time
+  // void stopElapsedTimeTracking() {
+  //   _timer?.cancel();
+  //   _timer = null;
+  // }
+
+
+  /// Custom stream to use in UI
+  // Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
+
+
+  Stream<Duration> get safeElapsedTimeStream => Stream.periodic(
+    Duration(seconds: 1),
+        (_) => audioPlayer.position,
+  );
 
 
 
@@ -171,7 +208,6 @@ class LiveStreamingController extends GetxController with DashboardService {
   @override
   void dispose() {
     stopElapsedTimeTracking();
-    _elapsedTimeController.close();
 
     audioPlayer.dispose();
     super.dispose();

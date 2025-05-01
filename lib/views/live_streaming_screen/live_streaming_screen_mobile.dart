@@ -189,34 +189,63 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(right: 0.0),
-                            child: StreamBuilder<Duration>(
-                              stream: controller.elapsedTimeStream,
-                              builder: (context, snapshot) {
-                                // 1. Get the elapsed time (or zero if still null)
-                                final elapsed = snapshot.data ?? Duration.zero;
-                                // 2. Pull the total duration (null for a live stream)
-                                final total = controller.audioPlayer.duration;
+                            child: Obx(() {
+                              // 1. Get the elapsed time (using the reactive variable)
+                              final elapsed = controller.elapsedTime.value;
 
-                                // Helpers for formatting mm:ss
-                                String twoDigits(int n) => n.toString().padLeft(2, '0');
-                                String format(Duration d) =>
-                                    "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
+                              // 2. Pull the total duration (null for a live stream)
+                              final total = controller.audioPlayer.duration;
 
-                                // 3. Build display strings
-                                final posText = format(elapsed);
-                                final durText = (total == null) ? "LIVE" : format(total);
+                              // Helpers for formatting mm:ss
+                              String twoDigits(int n) => n.toString().padLeft(2, '0');
+                              String format(Duration d) =>
+                                  "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
 
-                                // 4. Render
-                                return Text(
-                                  "$posText / $durText",
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: CustomColor.whiteColor,
-                                  ),
-                                );
-                              },
-                            ),
+                              // 3. Build display strings
+                              final posText = format(elapsed);
+                              final durText = (total == null) ? "LIVE" : format(total);
+
+                              // 4. Render
+                              return Text(
+                                "$posText / $durText",
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: CustomColor.whiteColor,
+                                ),
+                              );
+                            }),
+
+
+
+                            // child: StreamBuilder<Duration>(
+                            //   stream: controller.elapsedTime,
+                            //   builder: (context, snapshot) {
+                            //     // 1. Get the elapsed time (or zero if still null)
+                            //     final elapsed = snapshot.data ?? Duration.zero;
+                            //     // 2. Pull the total duration (null for a live stream)
+                            //     final total = controller.audioPlayer.duration;
+                            //
+                            //     // Helpers for formatting mm:ss
+                            //     String twoDigits(int n) => n.toString().padLeft(2, '0');
+                            //     String format(Duration d) =>
+                            //         "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
+                            //
+                            //     // 3. Build display strings
+                            //     final posText = format(elapsed);
+                            //     final durText = (total == null) ? "LIVE" : format(total);
+                            //
+                            //     // 4. Render
+                            //     return Text(
+                            //       "$posText / $durText",
+                            //       style: const TextStyle(
+                            //         fontSize: 16.0,
+                            //         fontWeight: FontWeight.bold,
+                            //         color: CustomColor.whiteColor,
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
 
 
 
