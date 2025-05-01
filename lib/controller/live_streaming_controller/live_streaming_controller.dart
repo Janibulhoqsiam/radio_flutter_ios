@@ -60,7 +60,6 @@ class LiveStreamingController extends GetxController with DashboardService {
       try {
         isPlaying.value = true;
         startElapsedTimeTracking();
-        startUsageTimer();
         await audioPlayer.play();
         print('✅ Audio started playing');
       } catch (e) {
@@ -70,7 +69,6 @@ class LiveStreamingController extends GetxController with DashboardService {
       print('⏹ Attempting to stop audio...');
       isPlaying.value = false;
       stopElapsedTimeTracking();
-      stopUsageTimer();
       await audioPlayer.stop();
 
       print('🛑 Audio stopped');
@@ -80,21 +78,21 @@ class LiveStreamingController extends GetxController with DashboardService {
     print('🔁 Final isPlaying value: ${isPlaying.value}');
   }
 
-  void startUsageTimer() {
-
-    audioPlayer.positionStream.listen((position) {
-      final seconds = position.inSeconds;
-      final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
-      dataUsage.value = "${mb.toStringAsFixed(2)} MB";
-    });
-  }
-
-
-  void stopUsageTimer() {
-    if (_usageTimer.isActive) {
-      _usageTimer.cancel();
-    }
-  }
+  // void startUsageTimer() {
+  //
+  //   audioPlayer.positionStream.listen((position) {
+  //     final seconds = position.inSeconds;
+  //     final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
+  //     dataUsage.value = "${mb.toStringAsFixed(2)} MB";
+  //   });
+  // }
+  //
+  //
+  // void stopUsageTimer() {
+  //   if (_usageTimer.isActive) {
+  //     _usageTimer.cancel();
+  //   }
+  // }
 
 
   // Stream<PositionData> get PositionDataStream =>

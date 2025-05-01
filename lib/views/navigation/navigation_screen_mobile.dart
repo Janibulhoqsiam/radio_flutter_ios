@@ -188,17 +188,19 @@ class NavigationScreenMobile extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                      TitleHeading5Widget(
-                                        text: liveStreamingController
-                                            .liveShowModel
-                                            .data
-                                            .schedule
-                                            .first
-                                            .name,
-                                        color:
-                                            CustomColor.primaryLightTextColor,
-                                        fontWeight: FontWeight.w600,
+                                      Center(
+                                        child: TitleHeading5Widget(
+                                          text: liveStreamingController
+                                              .liveShowModel
+                                              .data
+                                              .schedule
+                                              .first
+                                              .name,
+                                          color: CustomColor.primaryLightTextColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
+
                                       horizontalSpace(
                                           Dimensions.widthSize * .25),
                                       CircleAvatar(
