@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -10,6 +9,7 @@ import '../../backend/services/dashboard_services/dashboard_service.dart';
 import '../../main.dart';
 import '../../utils/basic_screen_imports.dart';
 import 'package:audio_service/audio_service.dart';
+
 
 
 import 'package:rxdart/rxdart.dart' as rxd;
@@ -26,6 +26,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   RxString radioTitle = ''.obs;
   RxString radioHost = ''.obs;
   RxString radioAlbum = ''.obs;
+
 
   final songInfoUrl =
       "http://surilive.com:8000/currentsong?sid=1"; // song info url
@@ -58,7 +59,7 @@ class LiveStreamingController extends GetxController with DashboardService {
       print('▶️ Attempting to play audio...');
       try {
         isPlaying.value = true;
-        startUsageTimer();
+        startElapsedTimeTracking();
         await audioPlayer.play();
         print('✅ Audio started playing');
       } catch (e) {
@@ -67,7 +68,7 @@ class LiveStreamingController extends GetxController with DashboardService {
     } else {
       print('⏹ Attempting to stop audio...');
       isPlaying.value = false;
-      stopUsageTimer();
+      stopElapsedTimeTracking();
       await audioPlayer.stop();
 
       print('🛑 Audio stopped');
@@ -99,39 +100,47 @@ class LiveStreamingController extends GetxController with DashboardService {
     }
   }
 
+
   // Stream<PositionData> get PositionDataStream =>
-  //     rxd.Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+  //     rxd.Rx.combineLatest2<Duration, Duration, PositionData>(
   //       audioPlayer.positionStream,
   //       audioPlayer.bufferedPositionStream,
-  //       audioPlayer.durationStream,
-  //       (position, bufferedPosition, duration) => PositionData(
-  //         position,
-  //         bufferedPosition,
-  //         duration ?? Duration.zero,
-  //       ),
+  //           (position, buffered) => PositionData(position, buffered, Duration.zero),
   //     );
 
 
-
-  Stream<PositionData> get PositionDataStream =>
-      rxd.Rx.combineLatest2<Duration, Duration, PositionData>(
-        audioPlayer.positionStream,
-        audioPlayer.bufferedPositionStream,
-            (position, buffered) => PositionData(position, buffered, Duration.zero),
-      );
-
-
   /// A stream that emits only the current playback position.
-  Stream<Duration> get elapsedTimeStream => audioPlayer.positionStream;
+  // Stream<Duration> get elapsedTimeStream => audioPlayer.positionStream;
 
 
 
+  final _elapsedTimeController = StreamController<Duration>.broadcast();
+  Timer? _timer;
 
-  Future<void> _init() async {
-    final session = await AudioSession.instance;
-    await session.configure(AudioSessionConfiguration.music());
-
+  /// Start emitting elapsed time manually
+  void startElapsedTimeTracking() {
+    _timer?.cancel(); // Cancel previous timer if any
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final position = audioPlayer.position;
+      _elapsedTimeController.add(position);
+    });
   }
+
+  /// Stop emitting elapsed time
+  void stopElapsedTimeTracking() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  /// Custom stream to use in UI
+  Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
+
+
+
+
+
+
+
 
 
   @override
@@ -139,11 +148,8 @@ class LiveStreamingController extends GetxController with DashboardService {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
-    _init();
 
-    audioPlayer.positionStream.listen((_) {
-      /* no-op */
-    });
+
     String title = 'starting';
     String artist = "Connecting";
     songSubscription = songInfoStream().listen((text) async {
@@ -162,10 +168,10 @@ class LiveStreamingController extends GetxController with DashboardService {
 
   @override
   void dispose() {
+    stopElapsedTimeTracking();
+    _elapsedTimeController.close();
+
     audioPlayer.dispose();
-    if (_usageTimer.isActive) {
-      _usageTimer.cancel();
-    }
     super.dispose();
   }
 
@@ -217,28 +223,6 @@ class LiveStreamingController extends GetxController with DashboardService {
 
       fetchAndSetSongInfo();
 
-      // songInfoStream(withDelay: false).listen((text) {
-      //   if (text.contains(" - ")) {
-      //     final parts = text.split(" - ");
-      //     artist = parts[0];
-      //     title = parts[1];
-      //   }
-      //   radioController.updateSong(title, artist);
-      //   audioPlayer.setAudioSource(
-      //     AudioSource.uri(
-      //       Uri.parse("https://surilive.com:8000/stream"),
-      //       tag: MediaItem(
-      //           id: "1",
-      //           title: title,
-      //           artist: artist,
-      //           artUri: Uri.parse(
-      //               "https://i.ibb.co.com/JWRXwxnf/7ecde97f-6287-4eef-976f-bd7ad97ebef3.png")),
-      //     ),
-      //     preload: false,
-      //   );
-      //   update();
-      //   print("Received data without delay: $text");
-      // });
     }).catchError((onError) {
       log.e(onError);
     });
@@ -282,7 +266,7 @@ class LiveStreamingController extends GetxController with DashboardService {
                   'Content-Type': 'audio/mpeg',         // hint iOS about the format
                   'Range': 'bytes=0-',                  // force byte-range mode
                 },
-                
+
                 tag: MediaItem(
                     id: "1",
                     title: fetchedTitle,
@@ -320,3 +304,38 @@ class PositionData {
   final Duration bufferedPosition;
   final Duration duration;
 }
+
+
+
+
+class PositionTicker {
+  final _controller = StreamController<Duration>.broadcast();
+  Timer? _timer;
+  int _seconds = 0;
+
+  Stream<Duration> get stream => _controller.stream;
+
+  void start() {
+    _timer ??= Timer.periodic(Duration(seconds: 1), (_) {
+      _seconds++;
+      _controller.add(Duration(seconds: _seconds));
+    });
+  }
+
+  void stop() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void reset() {
+    _seconds = 0;
+    _controller.add(Duration.zero);
+  }
+
+  void dispose() {
+    _timer?.cancel();
+    _controller.close();
+  }
+}
+
+
