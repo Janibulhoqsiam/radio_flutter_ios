@@ -144,29 +144,32 @@ class LiveStreamingController extends GetxController with DashboardService {
 
 
 
-
   final _elapsedTimeController = StreamController<Duration>.broadcast();
   Timer? _timer;
-  /// Start emitting elapsed time manually
+  Duration _elapsed = Duration.zero;
+
+  /// Start emitting incrementing durations
   void startElapsedTimeTracking() {
-    print("Starting elapsed time tracking..."); // DEBUG
+    print("Starting elapsed time tracking...");
     _timer?.cancel(); // Cancel previous timer if any
+    _elapsed = Duration.zero; // Reset elapsed time
+
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final position = audioPlayer.position;
-      print("Current position: $position"); // DEBUG
-      _elapsedTimeController.add(position);
+      _elapsed += const Duration(seconds: 1);
+      print("Mimicked elapsed: $_elapsed");
+      _elapsedTimeController.add(_elapsed);
     });
   }
 
-  /// Stop emitting elapsed time
+  /// Stop emitting time
   void stopElapsedTimeTracking() {
     _timer?.cancel();
     _timer = null;
   }
 
-
-  // / Custom stream to use in UI
+  /// Custom stream for UI
   Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
+
 
 
   Stream<Duration> get safeElapsedTimeStream => Stream.periodic(
