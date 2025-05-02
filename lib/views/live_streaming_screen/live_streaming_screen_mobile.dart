@@ -309,7 +309,7 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                             children: [
                               // Left: Elapsed Time
                               Padding(
-                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.10), // Dynamic left padding based on screen width
+                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.15), // Dynamic left padding based on screen width
                                 child: StreamBuilder<Duration>(
                                   stream: controller.elapsedTimeStream,
                                   builder: (context, snapshot) {
@@ -324,7 +324,7 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                                     final durText ="LIVE";
 
                                     return Text(
-                                      "$posText / $durText",
+                                      posText,
                                       style: const TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.bold,
