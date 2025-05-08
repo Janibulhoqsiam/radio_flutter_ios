@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>GADApplicationIdentifier</key>
-    <string>ca-app-pub-3940256099942544~1458002511</string>
+    <string>ca-app-pub-4002965790017475~4547812145</string>
 
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>We need Bluetooth to connect to AirPlay devices</string>
