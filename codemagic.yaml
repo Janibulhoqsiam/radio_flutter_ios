@@ -17,7 +17,7 @@ workflows:
       xcode: latest # <-- set to specific version e.g. 14.3, 15.0 to avoid unexpected updates.
       cocoapods: default
       android_signing:
-        keystore: androis_sign
+        - keystore: androis_sign
     scripts:
       - name: Set up code signing settings on Xcode project
         script: |
@@ -43,6 +43,14 @@ workflows:
             --build-name=5.0.8 \
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1)) \
             --export-options-plist=/Users/builder/export_options.plist
+
+      - name: Flutter build signed APK
+        script: |
+          echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
+          flutter build apk --release \
+            --build-name=5.0.8 \
+            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1))
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
