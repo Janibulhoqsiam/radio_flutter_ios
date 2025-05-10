@@ -62,6 +62,7 @@ workflows:
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1))
 
     artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
