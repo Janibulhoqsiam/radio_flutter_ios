@@ -44,6 +44,15 @@ workflows:
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1)) \
             --export-options-plist=/Users/builder/export_options.plist
 
+      - name: Set up key.properties
+        script: |
+          cat >> "$CM_BUILD_DIR/project_directory/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF    
+
       - name: Flutter build signed APK
         script: |
           echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
