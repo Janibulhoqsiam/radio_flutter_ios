@@ -73,6 +73,8 @@ dev_dependencies:
   rename: ^3.0.2
   google_mobile_ads: ^6.0.0
   audio_service: ^0.18.18
+  video_player: ^2.9.5
+  chewie: ^1.11.3
 
 flutter_launcher_icons:
   android: true

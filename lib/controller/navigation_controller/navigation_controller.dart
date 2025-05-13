@@ -1,6 +1,7 @@
 import 'package:adradio/backend/local_storage/local_storage.dart';
 import 'package:adradio/backend/model/common/common_success_model.dart';
 import 'package:adradio/views/contact_screen/contactscreen.dart';
+import 'package:adradio/views/livegemistweb_screen/livegemistweb_screen_mobile.dart';
 import 'package:adradio/views/livetvweb_screen/livetvweb_screen_mobile.dart';
 
 import '../../backend/services/auth_service/auth_service.dart';
@@ -20,7 +21,7 @@ class NavigationController extends GetxController with AuthService{
     NewsfeedScreen(),
     livetvweb_screen(),
     LiveStreamingScreen(),
-    ShowScheduleScreen(),
+    livegemistweb_screen(),
     contactscreen(),
 
   ];

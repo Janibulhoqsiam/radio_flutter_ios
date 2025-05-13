@@ -12,9 +12,9 @@ class Strings {
   static const String offlineText = "appLOfflineText";
   static const String newsfeed = "appLNewsfeed";
   static const String liveStreaming = "appLLiveStreaming";
-  static const String showSchedule = "appLShowSchedule";
+  static const String showSchedule = "Gemist";
   static const String LiveTv = "Live Tv";
-  static const String Contacts = "Contacts";
+  static const String Contacts = "Contact";
   static const String updateProfile = "appLUpdateProfile";
   static const String gallery = "appLGallery";
   static const String team = "appLTeam";

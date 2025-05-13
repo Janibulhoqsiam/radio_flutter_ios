@@ -46,6 +46,7 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * 0.30,
                   decoration: const BoxDecoration(
                     color: Color(0xFF1557AC),
+
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(30),
                       bottomRight: Radius.circular(30),
