@@ -192,8 +192,7 @@ class LiveStreamingController extends GetxController with DashboardService {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
-
-
+    playRadio();
     String title = 'starting';
     String artist = "Connecting";
     songSubscription = songInfoStream().listen((text) async {

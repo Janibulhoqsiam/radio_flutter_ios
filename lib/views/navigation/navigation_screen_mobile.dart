@@ -1,3 +1,4 @@
+import 'package:adradio/controller/%20radio_controller.dart';
 import 'package:adradio/utils/basic_screen_imports.dart';
 import 'package:adradio/widgets/others/custom_image_widget.dart';
 import 'package:dynamic_languages/dynamic_languages.dart';
@@ -190,12 +191,7 @@ class NavigationScreenMobile extends StatelessWidget {
                                     children: [
                                       Center(
                                         child: TitleHeading5Widget(
-                                          text: liveStreamingController
-                                              .liveShowModel
-                                              .data
-                                              .schedule
-                                              .first
-                                              .name,
+                                          text: radioController.title,
                                           color: CustomColor.primaryLightTextColor,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -223,8 +219,7 @@ class NavigationScreenMobile extends StatelessWidget {
                                     ],
                                   ),
                                   TitleHeading5Widget(
-                                    text: liveStreamingController
-                                        .liveShowModel.data.schedule.first.host,
+                                    text: radioController.artist,
                                     fontSize: Dimensions.headingTextSize7,
                                     color: CustomColor.primaryLightColor,
                                     fontWeight: FontWeight.w500,
@@ -470,7 +465,7 @@ class NavigationScreenMobile extends StatelessWidget {
           text: controller.selectedIndex.value == 2
               ? DynamicLanguage.isLoading
                   ? ""
-                  : DynamicLanguage.key(Strings.appName)
+                  : "Live Radio"
               : DynamicLanguage.isLoading
                   ? ""
                   : DynamicLanguage.key(controller.appTitle.value),
