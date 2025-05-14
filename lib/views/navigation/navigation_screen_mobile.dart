@@ -1,5 +1,7 @@
 import 'package:adradio/controller/%20radio_controller.dart';
+import 'package:adradio/controller/livetv_controller/livetv_controller.dart';
 import 'package:adradio/utils/basic_screen_imports.dart';
+import 'package:adradio/views/livetvweb_screen/livetvweb_screen_mobile.dart';
 import 'package:adradio/widgets/others/custom_image_widget.dart';
 import 'package:dynamic_languages/dynamic_languages.dart';
 import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
@@ -7,6 +9,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../../controller/banner_ad_controller.dart';
+import '../../controller/livegemist_controller/livegemist_controller.dart';
 import '/custom_assets/assets.gen.dart';
 import '../../controller/live_streaming_controller/live_streaming_controller.dart';
 import '../../controller/navigation_controller/navigation_controller.dart';
@@ -155,7 +158,10 @@ class NavigationScreenMobile extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: Dimensions.widthSize,
+
               ),
+
+
               child: Stack(
                 children: [
                   Container(
@@ -189,13 +195,25 @@ class NavigationScreenMobile extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
+                                      // Center(
+                                      //   child: TitleHeading5Widget(
+                                      //     text: "radioController.title..........",
+                                      //     color: CustomColor.primaryLightTextColor,
+                                      //     fontWeight: FontWeight.w600,
+                                      //   ),
+                                      // ),
+
+
                                       Center(
                                         child: TitleHeading5Widget(
-                                          text: radioController.title,
+                                          text: radioController.title.length > 20
+                                              ? '${radioController.title.substring(0, 20)}..'
+                                              : radioController.title,
                                           color: CustomColor.primaryLightTextColor,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
+
 
                                       horizontalSpace(
                                           Dimensions.widthSize * .25),
@@ -335,7 +353,7 @@ class NavigationScreenMobile extends StatelessWidget {
                   horizontalSpace(Dimensions.widthSize * 1.8),
                   BottomItemWidget(
                     icon: Icons.live_tv,
-                    label: "Live Tv",
+                    label: "Live TV",
                     index: 1,
                   ),
                 ],
@@ -515,7 +533,32 @@ class BottomItemWidget extends StatelessWidget {
       onTap: () {
         controller.selectedIndex.value = index!;
         controller.appTitle.value = controller.appTitleList[index!];
-        debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
+        // debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
+
+
+        if (controller.selectedIndex.value == index) {
+          /// If already selected, force reload for specific tab (example for index 3 - Gemist)
+          if (index == 3) {
+            debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
+            final livegemistController = Get.find<LivegemistController>();
+            livegemistController.webViewController?.clearCache();
+            livegemistController.loadAppropriateUrl();
+          } else if (index == 1) {
+            debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
+            final livetvController = Get.find<LivetvController>();
+            livetvController.webViewController?.clearCache();
+            livetvController.loadAppropriateUrl();
+          }
+        } else {
+          /// Normal behavior when selecting different tab
+          controller.selectedIndex.value = index!;
+          controller.appTitle.value = controller.appTitleList[index!];
+        }
+
+
+
+
+
       },
       child: Obx(
         () => SizedBox(
@@ -544,3 +587,4 @@ class BottomItemWidget extends StatelessWidget {
     );
   }
 }
+

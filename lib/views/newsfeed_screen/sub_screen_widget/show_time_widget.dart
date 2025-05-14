@@ -215,9 +215,9 @@ class ShowTimeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: Dimensions.marginSizeHorizontal * .5,
+        horizontal: Dimensions.marginSizeHorizontal * .7,
       ),
-      height: MediaQuery.sizeOf(context).height * .24,
+      height: MediaQuery.sizeOf(context).height * .18,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(Dimensions.radius),
@@ -235,7 +235,7 @@ class ShowTimeWidget extends StatelessWidget {
         children: [
           // Image side
           Container(
-            width: MediaQuery.sizeOf(context).width * 0.42,
+            width: MediaQuery.sizeOf(context).width * 0.35,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(Dimensions.radius),
@@ -244,14 +244,14 @@ class ShowTimeWidget extends StatelessWidget {
               image: DecorationImage(
                 image: NetworkImage(
                     "${nextShow.baseUrl}/${nextShow.imagePath}/${nextShowData.image}"),
-                fit: BoxFit.fill,
+                fit: BoxFit.fitWidth,
               ),
             ),
           ),
           // Content side
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(Dimensions.paddingHorizontalSize * 0.8),
+              padding: EdgeInsets.all(Dimensions.paddingHorizontalSize * 0.7),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -271,7 +271,7 @@ class ShowTimeWidget extends StatelessWidget {
                           ),
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             TitleHeading5Widget(
                               text: Strings.next,
@@ -301,7 +301,7 @@ class ShowTimeWidget extends StatelessWidget {
                       ),
                       horizontalSpace(Dimensions.paddingHorizontalSize * .4),
                       Column(
-                        crossAxisAlignment: crossStart,
+                        crossAxisAlignment: crossCenter,
                         children: [
                           TitleHeading4Widget(
                             text: Strings.showTime,

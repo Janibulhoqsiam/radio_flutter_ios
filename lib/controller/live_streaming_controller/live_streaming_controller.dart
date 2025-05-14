@@ -228,7 +228,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   LiveShowModel get liveShowModel => _liveShowModel;
 
   Future<LiveShowModel> liveShowProcess() async {
-    _isLoading.value = true;
+    _isLoading.value = false;
     update();
 
     await liveShowProcessApi().then((value) async {

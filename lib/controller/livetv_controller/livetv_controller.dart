@@ -109,7 +109,7 @@ class LivetvController extends GetxController {
   }
 
   void onPageStarted(String url) {
-    isLoading.value = true;
+    isLoading.value = false;
   }
 
   void onPageFinished(String url) {

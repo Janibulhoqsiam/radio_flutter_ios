@@ -76,23 +76,37 @@ class contactscreen extends StatelessWidget {
                                   launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
                                 },
                                 child: Container(
-                                  margin: EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.09),
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  margin: EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
                                   decoration: BoxDecoration(
                                     color: Colors.green[600],
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(color: Colors.lightGreenAccent, width: 2),
                                   ),
-                                  child: const Text(
-                                    'whatsAPP',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Chat us on',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                      Text(
+                                        'whatsAPP',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
+
                             ],
                           ),
 
@@ -232,7 +246,12 @@ class EmailSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(
+        left: 16,
+        top: 0,
+        right: 16,
+        bottom: 0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

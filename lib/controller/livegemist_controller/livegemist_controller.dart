@@ -12,6 +12,8 @@ class LivegemistController extends GetxController {
     super.onInit();
     webViewController = WebViewController();
 
+
+
     // Common JavaScript mode and navigation delegate
     webViewController?.setJavaScriptMode(JavaScriptMode.unrestricted);
     webViewController?.setNavigationDelegate(
@@ -54,7 +56,7 @@ class LivegemistController extends GetxController {
   }
 
   void onPageStarted(String url) {
-    isLoading.value = true;
+    isLoading.value = false;
   }
 
   void onPageFinished(String url) {
