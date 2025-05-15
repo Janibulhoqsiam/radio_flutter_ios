@@ -16,12 +16,15 @@ class NewsfeedController extends GetxController with DashboardService{
   /// ------------------------------------- >>
   final _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
+  //
+  // late NewsfeedModel _dashboardModel;
+  // NewsfeedModel get dashboardModel => _dashboardModel;
 
   late NewsfeedModel _dashboardModel;
   NewsfeedModel get dashboardModel => _dashboardModel;
 
   ///* Get Dashboard in process
-  Future<NewsfeedModel> newsfeedProcess() async {
+  Future<NewsfeedModel?> newsfeedProcess() async {
     _isLoading.value = true;
     update();
     await newsfeedProcessApi().then((value) {
@@ -35,4 +38,13 @@ class NewsfeedController extends GetxController with DashboardService{
     update();
     return _dashboardModel;
   }
+
+
+
+
+
+
+
+
+
 }

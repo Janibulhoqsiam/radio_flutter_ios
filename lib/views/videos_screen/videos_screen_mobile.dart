@@ -25,8 +25,8 @@ class VideosScreenMobile extends StatelessWidget {
   }
 
   _bodyWidget(BuildContext context) {
-    List<Video> videos =
-        Get.find<NewsfeedController>().dashboardModel.data.videos.videos;
+    List<Video>? videos =
+        Get.find<NewsfeedController>().dashboardModel?.data.videos.videos;
     return ListView.separated(
         padding: EdgeInsets.symmetric(
           horizontal: Dimensions.marginSizeHorizontal * .5,
@@ -41,6 +41,6 @@ class VideosScreenMobile extends StatelessWidget {
           );
         },
         separatorBuilder: (_, i) => verticalSpace(10),
-        itemCount: videos.length);
+        itemCount: videos!.length);
   }
 }

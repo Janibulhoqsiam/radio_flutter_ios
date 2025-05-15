@@ -225,14 +225,18 @@ class LiveStreamingController extends GetxController with DashboardService {
 
   late LiveShowModel _liveShowModel;
 
+
   LiveShowModel get liveShowModel => _liveShowModel;
 
   Future<LiveShowModel> liveShowProcess() async {
-    _isLoading.value = false;
+    _isLoading.value = true;
     update();
 
     await liveShowProcessApi().then((value) async {
       _liveShowModel = value!;
+
+// ✅ Replace with (temporary debug):
+      print("API Response: ${value.data.toString()}");
 
       radioUrl.value = _liveShowModel.data.schedule.first.radioLink;
       radioImage.value = _liveShowModel.data.schedule.first.image;

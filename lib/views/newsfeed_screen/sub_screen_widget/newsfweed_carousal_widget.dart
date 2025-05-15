@@ -8,7 +8,7 @@ class NewsfeedCarousalWidget extends StatelessWidget {
   final model.Banner data;
   NewsfeedCarousalWidget({super.key, required this.data});
 
-  final bannerPath = Get.find<NewsfeedController>().dashboardModel.data.banners;
+  final bannerPath = Get.find<NewsfeedController>().dashboardModel?.data.banners;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class NewsfeedCarousalWidget extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
           image: DecorationImage(
-            image: NetworkImage("${bannerPath.baseUrl}/${bannerPath.imagePath}/${data.image}"),
+            image: NetworkImage("${bannerPath?.baseUrl}/${bannerPath?.imagePath}/${data.image}"),
             fit: BoxFit.cover,
           ),
         ),

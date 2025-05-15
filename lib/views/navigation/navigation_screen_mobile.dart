@@ -249,6 +249,7 @@ class NavigationScreenMobile extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
+                            liveStreamingController.isPlaying.value = false;
                             liveStreamingController.playRadio();
                           },
                           child: CircleAvatar(
@@ -535,7 +536,7 @@ class BottomItemWidget extends StatelessWidget {
         controller.appTitle.value = controller.appTitleList[index!];
         // debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
 
-
+        //
         if (controller.selectedIndex.value == index) {
           /// If already selected, force reload for specific tab (example for index 3 - Gemist)
           if (index == 3) {

@@ -207,9 +207,9 @@ import '../../../utils/basic_screen_imports.dart';
 class ShowTimeWidget extends StatelessWidget {
   ShowTimeWidget({super.key});
 
-  final nextShow = Get.find<NewsfeedController>().dashboardModel.data.nextShow;
+  final nextShow = Get.find<NewsfeedController>().dashboardModel?.data.nextShow;
   final nextShowData =
-      Get.find<NewsfeedController>().dashboardModel.data.nextShow.nextShow;
+      Get.find<NewsfeedController>().dashboardModel?.data.nextShow.nextShow;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +243,7 @@ class ShowTimeWidget extends StatelessWidget {
               ),
               image: DecorationImage(
                 image: NetworkImage(
-                    "${nextShow.baseUrl}/${nextShow.imagePath}/${nextShowData.image}"),
+                    "${nextShow?.baseUrl}/${nextShow?.imagePath}/${nextShowData?.image}"),
                 fit: BoxFit.fitWidth,
               ),
             ),
@@ -312,7 +312,7 @@ class ShowTimeWidget extends StatelessWidget {
                             fontSize: Dimensions.headingTextSize7 * 1.2,
                           ),
                           TitleHeading5Widget(
-                            text: nextShowData.day.name,
+                            text: nextShowData!.day.name,
                             color: CustomColor.primaryLightTextColor
                                 .withOpacity(.60),
                             maxLines: 1,
@@ -322,7 +322,7 @@ class ShowTimeWidget extends StatelessWidget {
                           ),
                           TitleHeading5Widget(
                             text:
-                            "${nextShowData.startTime} - ${nextShowData.endTime}",
+                            "${nextShowData?.startTime} - ${nextShowData?.endTime}",
                             color: CustomColor.primaryLightColor,
                             fontWeight: FontWeight.w500,
                             fontSize: Dimensions.headingTextSize7,
@@ -333,7 +333,7 @@ class ShowTimeWidget extends StatelessWidget {
                   ),
                   verticalSpace(Dimensions.paddingVerticalSize * .2),
                   TitleHeading5Widget(
-                    text: nextShowData.name,
+                    text: nextShowData!.name,
                     fontSize: Dimensions.headingTextSize6 * 1,
                     maxLines: 1,
                     textOverflow: TextOverflow.ellipsis,
@@ -342,7 +342,7 @@ class ShowTimeWidget extends StatelessWidget {
                     bottom: Dimensions.paddingVerticalSize * .15,
                   ),
                   TitleHeading5Widget(
-                    text: nextShowData.description,
+                    text: nextShowData!.description,
                     color:
                     CustomColor.primaryLightTextColor.withOpacity(.6),
                     maxLines: 3,
@@ -371,7 +371,7 @@ class ShowTimeWidget extends StatelessWidget {
                       ),
                       child: TitleHeading5Widget(
                         maxLines: 1,
-                        text: nextShowData.host,
+                        text: nextShowData!.host,
                         fontSize: Dimensions.headingTextSize8 * .80,
                         fontWeight: FontWeight.w700,
                         color: CustomColor.primaryLightColor,

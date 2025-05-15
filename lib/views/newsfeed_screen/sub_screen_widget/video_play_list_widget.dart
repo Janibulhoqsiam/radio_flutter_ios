@@ -62,10 +62,10 @@ class VideoPlayListWidget extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               return VideoWidget(
-                video: controller.dashboardModel.data.videos.videos[index],
+                video: controller.dashboardModel!.data.videos.videos[index],
               );
             },
             separatorBuilder: (_, i) => horizontalSpace(5),
-            itemCount: controller.dashboardModel.data.videos.videos.length));
+            itemCount: controller.dashboardModel!.data.videos.videos.length));
   }
 }

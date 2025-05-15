@@ -19,7 +19,7 @@ class MyCarouselSlider extends StatelessWidget {
       children: [
         CarouselSlider(
           items: List.generate(
-              controller.dashboardModel.data.banners.banners.length,
+               controller.dashboardModel.data.banners.banners.length,
               (index) => Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(),
@@ -44,7 +44,7 @@ class MyCarouselSlider extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
               controller.dashboardModel.data.banners.banners.length,
-              (index) {
+                  (index) {
                 return Obx(
                         () => Container(
                           width: current.value == index

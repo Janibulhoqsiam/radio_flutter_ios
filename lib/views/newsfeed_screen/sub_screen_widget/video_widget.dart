@@ -11,7 +11,7 @@ class VideoWidget extends StatelessWidget {
     this.isFullScreen = false
   });
 
-  final videoPath = Get.find<NewsfeedController>().dashboardModel.data.videos;
+  final videoPath = Get.find<NewsfeedController>().dashboardModel?.data.videos;
   final Video video;
   final bool isFullScreen;
 
@@ -38,7 +38,7 @@ class VideoWidget extends StatelessWidget {
               ),
               image: DecorationImage(
                 image: NetworkImage(
-                    "${videoPath.baseUrl}/${videoPath.imagePath}/${video.image}"),
+                    "${videoPath?.baseUrl}/${videoPath?.imagePath}/${video.image}"),
                 fit: BoxFit.fill,
               ),
               // color: Colors.blueAccent,
