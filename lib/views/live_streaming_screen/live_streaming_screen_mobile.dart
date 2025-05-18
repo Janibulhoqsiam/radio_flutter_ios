@@ -46,7 +46,6 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * 0.30,
                   decoration: const BoxDecoration(
                     color: Color(0xFF1557AC),
-
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(30),
                       bottomRight: Radius.circular(30),
@@ -75,9 +74,23 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                 ),
 
                 // Main content
+                // controller.isLoading
+                //     ? const CustomLoadingAPI()
+                //     : _playerWidget(context),
+
                 controller.isLoading
                     ? const CustomLoadingAPI()
-                    : _playerWidget(context),
+                    : Builder(builder: (context) {
+                        // Return the widget first
+                        final widget = _playerWidget(context);
+
+                        // Schedule `playRadio();` to run after the frame is built
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          controller.playRadio();
+                        });
+
+                        return widget;
+                      }),
               ],
             ),
           ),
@@ -137,6 +150,7 @@ class LiveStreamingScreenMobile extends StatelessWidget {
   }
 
   _playerWidget(BuildContext context) {
+    // controller.playRadio();
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.99,
@@ -152,15 +166,14 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                 ? const SizedBox.shrink()
                 : Column(
                     children: [
-
                       TitleHeading1Widget(
-                        text:  radioController.title,
+                        text: radioController.title,
                         color: CustomColor.whiteColor,
                         fontWeight: FontWeight.w700,
                       ).paddingOnly(
                           bottom: Dimensions.paddingVerticalSize * 0.001),
                       TitleHeading5Widget(
-                        text:  radioController.artist,
+                        text: radioController.artist,
                         color: CustomColor.whiteColor.withOpacity(.40),
                         fontWeight: FontWeight.w500,
                       ),
@@ -174,15 +187,14 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                           if (Platform.isIOS) {
                             showDialog(
                               context: context,
-                              builder: (context) => Dialog(child: AirPlayButton()),
+                              builder: (context) =>
+                                  Dialog(child: AirPlayButton()),
                             );
                           } else if (Platform.isAndroid) {
                             AudioCastPicker.show();
                           }
                         },
                       ),
-
-
 
                       // Row(
                       //   mainAxisAlignment: MainAxisAlignment.center,
@@ -299,8 +311,6 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                       //   ],
                       // ),
 
-
-
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -310,19 +320,25 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                             children: [
                               // Left: Elapsed Time
                               Padding(
-                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.15), // Dynamic left padding based on screen width
+                                padding: EdgeInsets.only(
+                                    left: MediaQuery.of(context).size.width *
+                                        0.15),
+                                // Dynamic left padding based on screen width
                                 child: StreamBuilder<Duration>(
                                   stream: controller.elapsedTimeStream,
                                   builder: (context, snapshot) {
-                                    final elapsed = snapshot.data ?? Duration.zero;
-                                    final total = controller.audioPlayer.duration;
+                                    final elapsed =
+                                        snapshot.data ?? Duration.zero;
+                                    final total =
+                                        controller.audioPlayer.duration;
 
-                                    String twoDigits(int n) => n.toString().padLeft(2, '0');
+                                    String twoDigits(int n) =>
+                                        n.toString().padLeft(2, '0');
                                     String format(Duration d) =>
                                         "${twoDigits(d.inMinutes)}:${twoDigits(d.inSeconds.remainder(60))}";
 
                                     final posText = format(elapsed);
-                                    final durText ="LIVE";
+                                    final durText = "LIVE";
 
                                     return Text(
                                       posText,
@@ -338,7 +354,10 @@ class LiveStreamingScreenMobile extends StatelessWidget {
 
                               // Right: Data Usage
                               Padding(
-                                padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15), // Dynamic left padding based on screen width
+                                padding: EdgeInsets.only(
+                                    right: MediaQuery.of(context).size.width *
+                                        0.15),
+                                // Dynamic left padding based on screen width
 
                                 child: Text(
                                   controller.dataUsage.value,
@@ -354,66 +373,67 @@ class LiveStreamingScreenMobile extends StatelessWidget {
 
                           // Center: Play/Pause Button
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
                             child: CircleAvatar(
                               radius: Dimensions.radius * 5.8,
-                              backgroundColor: CustomColor.primaryLightColor.withOpacity(.04),
+                              backgroundColor: CustomColor.primaryLightColor
+                                  .withOpacity(.04),
                               child: CircleAvatar(
                                 radius: Dimensions.radius * 4.5,
-                                backgroundColor: CustomColor.whiteColor.withOpacity(.06),
+                                backgroundColor:
+                                    CustomColor.whiteColor.withOpacity(.06),
                                 child: Obx(() => CircularPercentIndicator(
-                                  radius: Dimensions.radius * 3.8,
-                                  arcType: ArcType.FULL,
-                                  backgroundColor: CustomColor.mainlcolor,
-                                  progressColor: CustomColor.whiteColor.withOpacity(.40),
-                                  animation: true,
-                                  percent: controller.isPlayLoading.value
-                                      ? 1
-                                      : controller.isPlaying.value
-                                      ? 1
-                                      : 0.2,
-                                  animationDuration: 2000,
-                                  center: CircleAvatar(
-                                    radius: Dimensions.radius * 3.5,
-                                    backgroundColor: CustomColor.whiteColor,
-                                    child: Center(
-                                      child: IconButton(
-                                        onPressed: () {
-                                          controller.playRadio();
-                                          if (bannerAdController.interstitialAd == null) {
-                                            if (controller.isPlaying.value == true) {
-                                              bannerAdController.loadInterstitialAd();
-                                              bannerAdController.showInterstitialAd();
-                                            }
-                                          } else {
-                                            if (controller.isPlaying.value == true) {
-                                              bannerAdController.showInterstitialAd();
-                                            }
-                                          }
-                                        },
-                                        icon: Icon(
-                                          controller.isPlaying.value
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
-                                          color: CustomColor.mainlcolor,
-                                          size: MediaQuery.sizeOf(context).width * .08,
+                                      radius: Dimensions.radius * 3.8,
+                                      arcType: ArcType.FULL,
+                                      backgroundColor: CustomColor.mainlcolor,
+                                      progressColor: CustomColor.whiteColor
+                                          .withOpacity(.40),
+                                      animation: true,
+                                      percent: controller.isPlayLoading.value
+                                          ? 1
+                                          : controller.isPlaying.value
+                                              ? 1
+                                              : 0.2,
+                                      animationDuration: 2000,
+                                      center: CircleAvatar(
+                                        radius: Dimensions.radius * 3.5,
+                                        backgroundColor: CustomColor.whiteColor,
+                                        child: Center(
+                                          child: IconButton(
+                                            onPressed: () {
+                                              controller.playRadio();
+                                              print(
+                                                  "Mimicked elapsed: play_pause button clicked");
+                                              if (bannerAdController.interstitialAd == null) {
+                                                if (controller.isPlaying.value == true) {
+                                                  bannerAdController.loadInterstitialAd();
+                                                  bannerAdController.showInterstitialAd();
+                                                }
+                                              } else {
+                                                if (controller.isPlaying.value == true) {
+                                                  bannerAdController.showInterstitialAd();
+                                                }
+                                              }
+                                            },
+                                            icon: Icon(
+                                              controller.isPlaying.value
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                              color: CustomColor.mainlcolor,
+                                              size: MediaQuery.sizeOf(context)
+                                                      .width *
+                                                  .08,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                )),
+                                    )),
                               ),
                             ),
                           ),
                         ],
                       ),
-
-
-
-
-
-
-
 
                       // TitleHeading5Widget(
                       //   text: controller.liveShowModel.data.schedule.first.description,
@@ -503,16 +523,10 @@ class LiveStreamingScreenMobile extends StatelessWidget {
   }
 }
 
-
-
-
 // 👇 Put this small clipper **inside the same file**, below your widget
 class _TopWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-
-
-
     Path path = Path();
     path.lineTo(0, size.height * 0.75);
 
@@ -539,9 +553,6 @@ class _TopWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-
-
-
 class AirPlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -560,8 +571,6 @@ class AirPlayButton extends StatelessWidget {
   }
 }
 
-
-
 class AudioCastPicker {
   static const MethodChannel _channel = MethodChannel('audio_cast_picker');
 
@@ -573,6 +582,3 @@ class AudioCastPicker {
     }
   }
 }
-
-
-

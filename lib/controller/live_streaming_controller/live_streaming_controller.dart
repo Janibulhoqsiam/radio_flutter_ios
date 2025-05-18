@@ -43,6 +43,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   late final AudioPlayer audioPlayer; // Not nullable
 
   RxBool isPlaying = false.obs;
+  RxBool isTAPClicked = false.obs;
   RxBool isPlayLoading = false.obs;
 
   void setVolume(double value) {
@@ -53,86 +54,74 @@ class LiveStreamingController extends GetxController with DashboardService {
   void playRadio() async {
 
     print('🔄 playRadio() called');
+    print("Mimicked elapsed: just started");
     isPlayLoading.value = true;
     print('🟠 Initial isPlaying value: ${isPlaying.value}');
 
-    if (!isPlaying.value) {
-      print('▶️ Attempting to play audio...');
+      final actuallyPlaying = audioPlayer.playing;
+      print('🟠 Actual playing state from player: $actuallyPlaying');
+
+    if (!actuallyPlaying ) {
+      print('Mimicked elapsed: ▶️ Attempting to play audio...');
       try {
         isPlaying.value = true;
+        isTAPClicked.value =false;
         startElapsedTimeTracking();
         await audioPlayer.play();
-        print('✅ Audio started playing');
+        print('Mimicked elapsed: ✅ Audio started playing');
+
       } catch (e) {
-        print('❌ Error playing audio: $e');
+        print('Mimicked elapsed: ❌ Error playing audio: $e');
       }
+
+    }else if(actuallyPlaying && isTAPClicked.value){
+
+      print('Mimicked elapsed: dont stop keeps playing ');
+      print('Mimicked elapsed: ISClicked checked ${isTAPClicked.value}');
+      isTAPClicked.value =false;
     } else {
-      print('⏹ Attempting to stop audio...');
-      isPlaying.value = false;
+      print('Mimicked elapsed: ⏹ Attempting to stop audio...');
+
       stopElapsedTimeTracking();
       await audioPlayer.stop();
-
+      print("Mimicked elapsed: Stopped but real");
+      isPlaying.value = false;
       print('🛑 Audio stopped');
     }
 
     isPlayLoading.value = false;
-    print('🔁 Final isPlaying value: ${isPlaying.value}');
+    print('Mimicked elapsed: 🔁 Final isPlaying value: ${isPlaying.value}');
   }
 
-  // void startUsageTimer() {
+
+  // void playRadio() async {
+  //   print('🔄 playRadio() called');
+  //   print("Mimicked elapsed: just started");
+  //   isPlayLoading.value = true;
   //
-  //   audioPlayer.positionStream.listen((position) {
-  //     final seconds = position.inSeconds;
-  //     final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
-  //     dataUsage.value = "${mb.toStringAsFixed(2)} MB";
-  //   });
-  // }
+  //   // Check actual player state instead of custom boolean
+  //   final actuallyPlaying = audioPlayer.playing;
+  //   print('🟠 Actual playing state from player: $actuallyPlaying');
   //
-  //
-  // void stopUsageTimer() {
-  //   if (_usageTimer.isActive) {
-  //     _usageTimer.cancel();
+  //   if (!actuallyPlaying) {
+  //     print('Mimicked elapsed: ▶️ Attempting to play audio...');
+  //     try {
+  //       startElapsedTimeTracking();
+  //       await audioPlayer.play();
+  //       print('Mimicked elapsed: ✅ Audio started playing');
+  //     } catch (e) {
+  //       print('Mimicked elapsed: ❌ Error playing audio: $e');
+  //     }
+  //   } else {
+  //     print('Mimicked elapsed: ⏹ Attempting to stop audio...');
+  //     stopElapsedTimeTracking();
+  //     await audioPlayer.stop();
+  //     print("Mimicked elapsed: Stopped but real");
+  //     print('🛑 Audio stopped');
   //   }
-  // }
-
-
-  // Stream<PositionData> get PositionDataStream =>
-  //     rxd.Rx.combineLatest2<Duration, Duration, PositionData>(
-  //       audioPlayer.positionStream,
-  //       audioPlayer.bufferedPositionStream,
-  //           (position, buffered) => PositionData(position, buffered, Duration.zero),
-  //     );
-
-
-  /// A stream that emits only the current playback position.
-  // Stream<Duration> get elapsedTimeStream => audioPlayer.positionStream;
-
-
-  // final currentPosition = ValueNotifier<Duration>(Duration.zero);
-
-
-
-
-  // Rx<Duration> elapsedTime = Duration.zero.obs;  // Make the elapsed time reactive
-  // Timer? _timer;
   //
-  // /// Start emitting elapsed time manually
-  // void startElapsedTimeTracking() {
-  //   print("Starting elapsed time tracking..."); // DEBUG
-  //   _timer?.cancel(); // Cancel previous timer if any
-  //   _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-  //     final position = audioPlayer.position;
-  //     print("Current position: $position"); // DEBUG
-  //
-  //     // Update the reactive variable
-  //     elapsedTime.value = position;
-  //   });
-  // }
-  //
-  // /// Stop emitting elapsed time
-  // void stopElapsedTimeTracking() {
-  //   _timer?.cancel();
-  //   _timer = null;
+  //   isPlayLoading.value = false;
+  //   print('Mimicked elapsed: 🔁 Final actual playing state: ${audioPlayer.playing}');
   // }
 
 
@@ -193,7 +182,8 @@ class LiveStreamingController extends GetxController with DashboardService {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
-    playRadio();
+
+
     String title = 'starting';
     String artist = "Connecting";
     songSubscription = songInfoStream().listen((text) async {
@@ -269,7 +259,6 @@ class LiveStreamingController extends GetxController with DashboardService {
       await audioPlayer.setAudioSource(playlist);
 
       fetchAndSetSongInfo();
-
     }).catchError((onError) {
       log.e(onError);
     });

@@ -17,7 +17,7 @@ dependencies:
   faker: ^2.1.0
 
   just_audio: ^0.10.0
-  just_audio_background: ^0.0.1-beta.16
+  just_audio_background: ^0.0.1-beta.10
 #  audio_service: ^0.18.12
   rxdart: ^0.28.0
 

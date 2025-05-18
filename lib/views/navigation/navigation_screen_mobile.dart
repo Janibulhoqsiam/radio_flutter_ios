@@ -15,7 +15,6 @@ import '../../controller/live_streaming_controller/live_streaming_controller.dar
 import '../../controller/navigation_controller/navigation_controller.dart';
 import '../../widgets/drawer/drawer_widget.dart';
 
-
 class NavigationScreenMobile extends StatelessWidget {
   NavigationScreenMobile({super.key});
 
@@ -23,7 +22,6 @@ class NavigationScreenMobile extends StatelessWidget {
   final liveStreamingController = Get.put(LiveStreamingController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final bannerAdController = Get.find<BannerAdController>();
-
 
   // @override
   // Widget build(BuildContext context) {
@@ -65,7 +63,6 @@ class NavigationScreenMobile extends StatelessWidget {
   //   });
   // }
 
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -87,40 +84,33 @@ class NavigationScreenMobile extends StatelessWidget {
                 ),
               ],
             ),
-
-
           ],
         ),
 
         // 🔽 Bottom Navigation Bar Logic
-        bottomNavigationBar: Obx(() =>
-        liveStreamingController.isLoading
+        bottomNavigationBar: Obx(() => liveStreamingController.isLoading
             ? const SizedBox.shrink()
             : (controller.selectedIndex.value == 0 &&
-            liveStreamingController
-                .liveShowModel.data.schedule.isNotEmpty)
-            ? _payerBottomNavBarWidget(context)
-            : _bottomNavBarWidget(context)),
+                    liveStreamingController
+                        .liveShowModel.data.schedule.isNotEmpty)
+                ? _payerBottomNavBarWidget(context)
+                : _bottomNavBarWidget(context)),
 
         // 🎯 Floating Action Button Logic
-        floatingActionButton: Obx(() =>
-        liveStreamingController.isLoading
+        floatingActionButton: Obx(() => liveStreamingController.isLoading
             ? const SizedBox.shrink()
-            : ((liveStreamingController
-            .liveShowModel.data.schedule.isEmpty ||
-            controller.selectedIndex.value != 0)
-            ? _middleButton(context)
-            : const SizedBox.shrink())),
+            : ((liveStreamingController.liveShowModel.data.schedule.isEmpty ||
+                    controller.selectedIndex.value != 0)
+                ? _middleButton(context)
+                : const SizedBox.shrink())),
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );
     });
   }
 
-
-
-
   _payerBottomNavBarWidget(BuildContext context) {
+    liveStreamingController.isTAPClicked.value = true;
     String imagePath =
         "${liveStreamingController.liveShowModel.data.baseUrl}/${liveStreamingController.liveShowModel.data.imagePath}";
     return SwipeDetector(
@@ -158,10 +148,7 @@ class NavigationScreenMobile extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: Dimensions.widthSize,
-
               ),
-
-
               child: Stack(
                 children: [
                   Container(
@@ -203,17 +190,17 @@ class NavigationScreenMobile extends StatelessWidget {
                                       //   ),
                                       // ),
 
-
                                       Center(
                                         child: TitleHeading5Widget(
-                                          text: radioController.title.length > 20
+                                          text: radioController.title.length >
+                                                  20
                                               ? '${radioController.title.substring(0, 20)}..'
                                               : radioController.title,
-                                          color: CustomColor.primaryLightTextColor,
+                                          color:
+                                              CustomColor.primaryLightTextColor,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-
 
                                       horizontalSpace(
                                           Dimensions.widthSize * .25),
@@ -249,8 +236,9 @@ class NavigationScreenMobile extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            liveStreamingController.isPlaying.value = false;
+                            // liveStreamingController.isPlaying.value = false;
                             liveStreamingController.playRadio();
+                            print("Mimicked elapsed: inkwell button clicked");
                           },
                           child: CircleAvatar(
                             radius: Dimensions.radius * 4,
@@ -280,10 +268,7 @@ class NavigationScreenMobile extends StatelessWidget {
                                       backgroundColor: CustomColor.whiteColor,
                                       child: Center(
                                         child: Icon(
-                                          liveStreamingController
-                                                  .isPlaying.value
-                                              ? Icons.pause
-                                              : Icons.play_arrow,
+                                          liveStreamingController.isPlaying.value ? Icons.pause : Icons.play_arrow,
                                           color: CustomColor.primaryLightColor,
                                           size:
                                               MediaQuery.sizeOf(context).width *
@@ -443,7 +428,13 @@ class NavigationScreenMobile extends StatelessWidget {
               )),
           onTap: () {
             controller.selectedIndex.value = 2;
-            liveStreamingController.playRadio();
+            // if (liveStreamingController.isPlaying.value==false) {
+              liveStreamingController.isTAPClicked.value = true;
+              print("Mimicked elapsed: middle button played");
+               print("Mimicked elapsed: just isTAPClicked ${liveStreamingController.isTAPClicked.value}");
+              //
+            // }
+
             debugPrint(
                 ">> Selected Index >> ${controller.selectedIndex.value}");
           },
@@ -540,12 +531,14 @@ class BottomItemWidget extends StatelessWidget {
         if (controller.selectedIndex.value == index) {
           /// If already selected, force reload for specific tab (example for index 3 - Gemist)
           if (index == 3) {
-            debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
+            debugPrint(
+                ">> Selected Index >> ${controller.selectedIndex.value}");
             final livegemistController = Get.find<LivegemistController>();
             livegemistController.webViewController?.clearCache();
             livegemistController.loadAppropriateUrl();
           } else if (index == 1) {
-            debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
+            debugPrint(
+                ">> Selected Index >> ${controller.selectedIndex.value}");
             final livetvController = Get.find<LivetvController>();
             livetvController.webViewController?.clearCache();
             livetvController.loadAppropriateUrl();
@@ -555,11 +548,6 @@ class BottomItemWidget extends StatelessWidget {
           controller.selectedIndex.value = index!;
           controller.appTitle.value = controller.appTitleList[index!];
         }
-
-
-
-
-
       },
       child: Obx(
         () => SizedBox(
@@ -588,4 +576,3 @@ class BottomItemWidget extends StatelessWidget {
     );
   }
 }
-
