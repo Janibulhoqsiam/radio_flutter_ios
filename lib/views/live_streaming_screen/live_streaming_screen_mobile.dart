@@ -83,10 +83,14 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                     : Builder(builder: (context) {
                         // Return the widget first
                         final widget = _playerWidget(context);
-
+                        final isActuallyPlaying = Get.find<LiveStreamingController>().actuallyPlaying;
                         // Schedule `playRadio();` to run after the frame is built
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          controller.playRadio();
+                          if(!isActuallyPlaying){
+                            controller.playRadio();
+                            print('Mimicked elapsed: started from ui');
+                          }
+
                         });
 
                         return widget;
@@ -403,18 +407,9 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                                           child: IconButton(
                                             onPressed: () {
                                               controller.playRadio();
-                                              print(
-                                                  "Mimicked elapsed: play_pause button clicked");
-                                              if (bannerAdController.interstitialAd == null) {
-                                                if (controller.isPlaying.value == true) {
-                                                  bannerAdController.loadInterstitialAd();
-                                                  bannerAdController.showInterstitialAd();
-                                                }
-                                              } else {
-                                                if (controller.isPlaying.value == true) {
-                                                  bannerAdController.showInterstitialAd();
-                                                }
-                                              }
+                                              print("Mimicked elapsed: play_pause button clicked");
+
+
                                             },
                                             icon: Icon(
                                               controller.isPlaying.value

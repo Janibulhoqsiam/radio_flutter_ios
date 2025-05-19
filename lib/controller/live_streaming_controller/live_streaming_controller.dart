@@ -10,11 +10,10 @@ import '../../main.dart';
 import '../../utils/basic_screen_imports.dart';
 import 'package:audio_service/audio_service.dart';
 
-
-
 import 'package:rxdart/rxdart.dart' as rxd;
-import 'package:get/get.dart'; // Or wherever your Get imports are
+import 'package:get/get.dart';
 
+import '../banner_ad_controller.dart'; // Or wherever your Get imports are
 
 class LiveStreamingController extends GetxController with DashboardService {
   var setVolumeValue = 1.0.obs;
@@ -26,7 +25,6 @@ class LiveStreamingController extends GetxController with DashboardService {
   RxString radioTitle = ''.obs;
   RxString radioHost = ''.obs;
   RxString radioAlbum = ''.obs;
-
 
   final songInfoUrl =
       "http://surilive.com:8000/currentsong?sid=1"; // song info url
@@ -42,6 +40,8 @@ class LiveStreamingController extends GetxController with DashboardService {
 
   late final AudioPlayer audioPlayer; // Not nullable
 
+  bool get actuallyPlaying => audioPlayer.playing; // ✅ Real-time getter
+
   RxBool isPlaying = false.obs;
   RxBool isTAPClicked = false.obs;
   RxBool isPlayLoading = false.obs;
@@ -51,34 +51,44 @@ class LiveStreamingController extends GetxController with DashboardService {
     audioPlayer.setVolume(value);
   }
 
+  final BannerAdController bannerAdController = Get.put(BannerAdController());
+  final bannerAdControllerF = Get.find<BannerAdController>();
+
   void playRadio() async {
+    bannerAdController.loadInterstitialAd();
+    bannerAdController.loadBannerAd();
 
     print('🔄 playRadio() called');
     print("Mimicked elapsed: just started");
     isPlayLoading.value = true;
     print('🟠 Initial isPlaying value: ${isPlaying.value}');
 
-      final actuallyPlaying = audioPlayer.playing;
-      print('🟠 Actual playing state from player: $actuallyPlaying');
+    // final actuallyPlaying = audioPlayer.playing;
+    print('🟠 Actual playing state from player: $actuallyPlaying');
 
-    if (!actuallyPlaying ) {
+    if (!isPlaying.value && !actuallyPlaying) {
       print('Mimicked elapsed: ▶️ Attempting to play audio...');
       try {
+
+        if (bannerAdController.interstitialAd == null) {
+          bannerAdController.loadInterstitialAd();
+          bannerAdController.showInterstitialAd();
+        } else {
+          bannerAdController.showInterstitialAd();
+        }
+
         isPlaying.value = true;
-        isTAPClicked.value =false;
+        isTAPClicked.value = false;
         startElapsedTimeTracking();
         await audioPlayer.play();
         print('Mimicked elapsed: ✅ Audio started playing');
-
       } catch (e) {
         print('Mimicked elapsed: ❌ Error playing audio: $e');
       }
-
-    }else if(actuallyPlaying && isTAPClicked.value){
-
+    } else if (actuallyPlaying && isTAPClicked.value) {
       print('Mimicked elapsed: dont stop keeps playing ');
       print('Mimicked elapsed: ISClicked checked ${isTAPClicked.value}');
-      isTAPClicked.value =false;
+      isTAPClicked.value = false;
     } else {
       print('Mimicked elapsed: ⏹ Attempting to stop audio...');
 
@@ -92,39 +102,6 @@ class LiveStreamingController extends GetxController with DashboardService {
     isPlayLoading.value = false;
     print('Mimicked elapsed: 🔁 Final isPlaying value: ${isPlaying.value}');
   }
-
-
-  // void playRadio() async {
-  //   print('🔄 playRadio() called');
-  //   print("Mimicked elapsed: just started");
-  //   isPlayLoading.value = true;
-  //
-  //   // Check actual player state instead of custom boolean
-  //   final actuallyPlaying = audioPlayer.playing;
-  //   print('🟠 Actual playing state from player: $actuallyPlaying');
-  //
-  //   if (!actuallyPlaying) {
-  //     print('Mimicked elapsed: ▶️ Attempting to play audio...');
-  //     try {
-  //       startElapsedTimeTracking();
-  //       await audioPlayer.play();
-  //       print('Mimicked elapsed: ✅ Audio started playing');
-  //     } catch (e) {
-  //       print('Mimicked elapsed: ❌ Error playing audio: $e');
-  //     }
-  //   } else {
-  //     print('Mimicked elapsed: ⏹ Attempting to stop audio...');
-  //     stopElapsedTimeTracking();
-  //     await audioPlayer.stop();
-  //     print("Mimicked elapsed: Stopped but real");
-  //     print('🛑 Audio stopped');
-  //   }
-  //
-  //   isPlayLoading.value = false;
-  //   print('Mimicked elapsed: 🔁 Final actual playing state: ${audioPlayer.playing}');
-  // }
-
-
 
   final _elapsedTimeController = StreamController<Duration>.broadcast();
   Timer? _timer;
@@ -145,13 +122,7 @@ class LiveStreamingController extends GetxController with DashboardService {
       final seconds = _elapsed.inSeconds;
       final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
-
     });
-
-
-
-
-
   }
 
   /// Stop emitting time
@@ -163,26 +134,16 @@ class LiveStreamingController extends GetxController with DashboardService {
   /// Custom stream for UI
   Stream<Duration> get elapsedTimeStream => _elapsedTimeController.stream;
 
-
-
   Stream<Duration> get safeElapsedTimeStream => Stream.periodic(
-    Duration(seconds: 1),
+        Duration(seconds: 1),
         (_) => audioPlayer.position,
-  );
-
-
-
-
-
-
-
+      );
 
   @override
   void onInit() {
     super.onInit();
     audioPlayer = AudioPlayer();
     liveShowProcess();
-
 
     String title = 'starting';
     String artist = "Connecting";
@@ -214,7 +175,6 @@ class LiveStreamingController extends GetxController with DashboardService {
   bool get isLoading => _isLoading.value;
 
   late LiveShowModel _liveShowModel;
-
 
   LiveShowModel get liveShowModel => _liveShowModel;
 
@@ -341,9 +301,6 @@ class PositionData {
   final Duration duration;
 }
 
-
-
-
 class PositionTicker {
   final _controller = StreamController<Duration>.broadcast();
   Timer? _timer;
@@ -373,5 +330,3 @@ class PositionTicker {
     _controller.close();
   }
 }
-
-
