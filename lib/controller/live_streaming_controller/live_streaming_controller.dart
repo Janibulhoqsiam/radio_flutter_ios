@@ -13,7 +13,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:rxdart/rxdart.dart' as rxd;
 import 'package:get/get.dart';
 
-import '../banner_ad_controller.dart'; // Or wherever your Get imports are
+import '../banner_ad_controller.dart';
+import '../global_state_controller.dart'; // Or wherever your Get imports are
 
 class LiveStreamingController extends GetxController with DashboardService {
   var setVolumeValue = 1.0.obs;
@@ -54,10 +55,13 @@ class LiveStreamingController extends GetxController with DashboardService {
   final BannerAdController bannerAdController = Get.put(BannerAdController());
   final bannerAdControllerF = Get.find<BannerAdController>();
 
+  final globalStateController = Get.find<GlobalStateController>();
+
+
   void playRadio() async {
     bannerAdController.loadInterstitialAd();
     bannerAdController.loadBannerAd();
-
+    bool isLoaded = globalStateController.isSplashImageLoaded.value;
     print('🔄 playRadio() called');
     print("Mimicked elapsed: just started");
     isPlayLoading.value = true;
@@ -70,10 +74,12 @@ class LiveStreamingController extends GetxController with DashboardService {
       print('Mimicked elapsed: ▶️ Attempting to play audio...');
       try {
 
-        if (bannerAdController.interstitialAd == null) {
+        if (bannerAdController.interstitialAd == null && !isLoaded) {
           bannerAdController.loadInterstitialAd();
           bannerAdController.showInterstitialAd();
-        } else {
+        } else if(bannerAdController.interstitialAd != null && !isLoaded) {
+          bannerAdController.showInterstitialAd();
+        }else{
           bannerAdController.showInterstitialAd();
         }
 
