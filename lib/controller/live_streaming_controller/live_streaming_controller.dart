@@ -74,10 +74,10 @@ class LiveStreamingController extends GetxController with DashboardService {
       print('Mimicked elapsed: ▶️ Attempting to play audio...');
       try {
 
-        if (bannerAdController.interstitialAd == null && !isLoaded) {
+        if (bannerAdController.interstitialAd == null && isLoaded ==false) {
           bannerAdController.loadInterstitialAd();
           bannerAdController.showInterstitialAd();
-        } else if(bannerAdController.interstitialAd != null && !isLoaded) {
+        } else if(bannerAdController.interstitialAd != null && isLoaded ==false) {
           bannerAdController.showInterstitialAd();
         }else{
           bannerAdController.showInterstitialAd();
@@ -87,6 +87,7 @@ class LiveStreamingController extends GetxController with DashboardService {
         isTAPClicked.value = false;
         startElapsedTimeTracking();
         await audioPlayer.play();
+        globalStateController.isSplashImageLoaded.value=false;
         print('Mimicked elapsed: ✅ Audio started playing');
       } catch (e) {
         print('Mimicked elapsed: ❌ Error playing audio: $e');
