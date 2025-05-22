@@ -1,29 +1,96 @@
 workflows:
-  ios-simulator-build:
-    name: iOS Simulator Build
+  ios-workflow:
+    name: iOS Workflow
     instance_type: mac_mini_m2
-    max_build_duration: 60
+    max_build_duration: 120
+    integrations:
+      app_store_connect: Apintie_
+
+
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.viastreaming.apintie
+      vars:
+        APP_ID: 6808a9a516c8016a03253f44 # <-- Put your APP ID here
       flutter: stable
-      xcode: latest
+      xcode: latest # <-- set to specific version e.g. 14.3, 15.0 to avoid unexpected updates.
+      cocoapods: default
+      android_signing:
+        - keystore: androis_sign
     scripts:
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+
       - name: Install Flutter dependencies
         script: |
           flutter clean
+          rm -rf ios/Podfile.lock ios/Pods
           flutter pub get
 
-      - name: Build iOS Simulator .app
+      - name: iOS - Install CocoaPods
         script: |
-          flutter build ios --debug --simulator
+          cd ios
+          pod repo update
+          pod install --repo-update
+          cd ..
+
+      - name: Flutter build ipa and automatic versioning
+        script: |
+          # See the following link about getting the latest App Store or TestFlight version - https://docs.codemagic.io/knowledge-codemagic/build-versioning/#app-store-or-testflight-latest-build-number
+          flutter build ipa --release \
+            --build-name=5.0.14 \
+            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1)) \
+            --export-options-plist=/Users/builder/export_options.plist
+
+      - name: Set up key.properties
+        script: |
+          cat >> "$CM_BUILD_DIR/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF
+
+
+      - name: Flutter build signed APK
+        script: |
+          echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
+          flutter build apk --release \
+            --build-name=5.0.14 \
+            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1))
 
     artifacts:
-      - build/ios/iphonesimulator/Runner.app
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
     publishing:
+      # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
       email:
         recipients:
-          - your_email@example.com
+          - janibulhoquesyeam@gmail.com.com
         notify:
-          success: true
-          failure: true
+          success: true # To receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+      slack:
+        # See the following link about how to connect your Slack account - https://docs.codemagic.io/publishing-yaml/distribution/#slack
+        channel: "#builds"
+        notify_on_build_start: true # To receive a notification when a build starts
+        notify:
+          success: true # To receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+      app_store_connect:
+        auth: integration
+
+        # Configuration related to TestFlight (optional)
+        # Note: This action is performed during post-processing.
+        submit_to_testflight: false
+        beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
+          - App Store Connect Users
+          - Apintie 2.0.0 Testers
+
+        # Configuration related to App Store (optional)
+        # Note: This action is performed during post-processing.
+        submit_to_app_store: false
