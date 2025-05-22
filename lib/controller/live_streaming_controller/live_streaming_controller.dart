@@ -47,6 +47,10 @@ class LiveStreamingController extends GetxController with DashboardService {
   RxBool isTAPClicked = false.obs;
   RxBool isPlayLoading = false.obs;
 
+  // RxBool isSplashImageLoaded = false.obs;
+  RxnBool isSplashImageLoaded = RxnBool();
+
+
   void setVolume(double value) {
     setVolumeValue.value = value;
     audioPlayer.setVolume(value);
@@ -61,7 +65,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   void playRadio() async {
     bannerAdController.loadInterstitialAd();
     bannerAdController.loadBannerAd();
-    bool isLoaded = globalStateController.isSplashImageLoaded.value;
+    // bool isLoaded = globalStateController.isSplashImageLoaded.value;
     print('🔄 playRadio() called');
     print("Mimicked elapsed: just started");
     isPlayLoading.value = true;
@@ -73,25 +77,31 @@ class LiveStreamingController extends GetxController with DashboardService {
     if (!isPlaying.value && !actuallyPlaying) {
       print('Mimicked elapsed: ▶️ Attempting to play audio...');
       try {
-
-        if (bannerAdController.interstitialAd == null && isLoaded ==false) {
-          bannerAdController.loadInterstitialAd();
-          bannerAdController.showInterstitialAd();
-        } else if(bannerAdController.interstitialAd != null && isLoaded ==false) {
-          bannerAdController.showInterstitialAd();
-        }else{
-          bannerAdController.showInterstitialAd();
-        }
-
         isPlaying.value = true;
         isTAPClicked.value = false;
         startElapsedTimeTracking();
+        print('Mimicked: ✅ TestBefore-${globalStateController.isSplashImageLoaded.value}');
+
+
+        // Show ad only if splash image is NOT loaded
+        if (globalStateController.isSplashImageLoaded.value==false) {
+          print('Mimicked: ✅ splash Not loaded-FALSE and ads will show-${globalStateController.isSplashImageLoaded.value}');
+          if (bannerAdController.interstitialAd == null) {
+            bannerAdController.loadInterstitialAd();
+            bannerAdController.showInterstitialAd();
+          } else {
+            bannerAdController.showInterstitialAd();
+          }
+        }else{
+          print('Mimicked: ❌ splash loaded-TRUE and ads will NOT show-${globalStateController.isSplashImageLoaded.value}');
+        }
         await audioPlayer.play();
         globalStateController.isSplashImageLoaded.value=false;
         print('Mimicked elapsed: ✅ Audio started playing');
       } catch (e) {
         print('Mimicked elapsed: ❌ Error playing audio: $e');
       }
+
     } else if (actuallyPlaying && isTAPClicked.value) {
       print('Mimicked elapsed: dont stop keeps playing ');
       print('Mimicked elapsed: ISClicked checked ${isTAPClicked.value}');
@@ -149,6 +159,7 @@ class LiveStreamingController extends GetxController with DashboardService {
   @override
   void onInit() {
     super.onInit();
+    Get.put(GlobalStateController());
     audioPlayer = AudioPlayer();
     liveShowProcess();
 

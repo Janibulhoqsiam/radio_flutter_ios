@@ -408,8 +408,6 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                                             onPressed: () {
                                               controller.playRadio();
                                               print("Mimicked elapsed: play_pause button clicked");
-
-
                                             },
                                             icon: Icon(
                                               controller.isPlaying.value

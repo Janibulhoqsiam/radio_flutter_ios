@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'backend/services/api_endpoint.dart';
 import 'backend/utils/network_check/dependency_injection.dart';
 import 'controller/audio_handler.dart';
+import 'controller/global_state_controller.dart';
 import 'controller/settings/basic_settings_controller.dart';
 import 'backend/language/english.dart';
 
@@ -58,7 +59,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
+  Get.lazyPut(() => GlobalStateController());
   runApp(const MyApp());
 }
 
