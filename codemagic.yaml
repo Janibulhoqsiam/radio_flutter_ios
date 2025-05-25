@@ -31,7 +31,6 @@ workflows:
           rm -rf ios/Podfile.lock ios/Pods
           flutter pub get
 
-      - name: Build iOS Simulator .app
       - name: iOS - Install CocoaPods
         script: |
           cd ios
