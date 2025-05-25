@@ -233,8 +233,11 @@ class LiveStreamingController extends GetxController with DashboardService {
         ],
       );
 
-      await audioPlayer.setLoopMode(LoopMode.all);
-      await audioPlayer.setAudioSource(playlist);
+      // await audioPlayer.setLoopMode(LoopMode.all);
+      await audioPlayer.setAudioSource(
+        playlist,
+        preload: false, // ❗ prevents immediate stream fetching
+      );
 
       fetchAndSetSongInfo();
     }).catchError((onError) {
