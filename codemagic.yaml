@@ -1,10 +1,7 @@
 workflows:
-  ios-simulator-build:
-    name: iOS Simulator Build
   ios-workflow:
     name: iOS Workflow
     instance_type: mac_mini_m2
-    max_build_duration: 60
     max_build_duration: 120
     integrations:
       app_store_connect: Apintie_
@@ -17,7 +14,6 @@ workflows:
       vars:
         APP_ID: 6808a9a516c8016a03253f44 # <-- Put your APP ID here
       flutter: stable
-      xcode: latest
       xcode: latest # <-- set to specific version e.g. 14.3, 15.0 to avoid unexpected updates.
       cocoapods: default
       android_signing:
@@ -33,7 +29,6 @@ workflows:
           rm -rf ios/Podfile.lock ios/Pods
           flutter pub get
 
-      - name: Build iOS Simulator .app
       - name: iOS - Install CocoaPods
         script: |
           cd ios
@@ -61,14 +56,12 @@ workflows:
 
       - name: Flutter build signed APK
         script: |
-          flutter build ios --debug --simulator
           echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
           flutter build apk --release \
             --build-name=5.0.14 \
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1))
 
     artifacts:
-      - build/ios/iphonesimulator/Runner.app
       - build/app/outputs/flutter-apk/app-release.apk
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
@@ -77,11 +70,8 @@ workflows:
       # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
       email:
         recipients:
-          - your_email@example.com
           - janibulhoquesyeam@gmail.com.com
         notify:
-          success: true
-          failure: true
           success: true # To receive a notification when a build succeeds
           failure: false # To not receive a notification when a build fails
       slack:
