@@ -1,6 +1,4 @@
 workflows:
-  ios-simulator-build:
-    name: iOS Simulator Build
   ios-workflow:
     name: iOS Workflow
     instance_type: mac_mini_m2
@@ -42,7 +40,7 @@ workflows:
         script: |
           # See the following link about getting the latest App Store or TestFlight version - https://docs.codemagic.io/knowledge-codemagic/build-versioning/#app-store-or-testflight-latest-build-number
           flutter build ipa --release \
-            --build-name=5.0.14 \
+            --build-name=5.0.15 \
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1)) \
             --export-options-plist=/Users/builder/export_options.plist
 
@@ -58,14 +56,12 @@ workflows:
 
       - name: Flutter build signed APK
         script: |
-          flutter build ios --debug --simulator
           echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
           flutter build apk --release \
-            --build-name=5.0.14 \
+            --build-name=5.0.15 \
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1))
 
     artifacts:
-      - build/ios/iphonesimulator/Runner.app
       - build/app/outputs/flutter-apk/app-release.apk
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
@@ -74,10 +70,9 @@ workflows:
       # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
       email:
         recipients:
-          - your_email@example.com
           - janibulhoquesyeam@gmail.com.com
         notify:
-          success: true
+          success: true # To receive a notification when a build succeeds
           failure: false # To not receive a notification when a build fails
       slack:
         # See the following link about how to connect your Slack account - https://docs.codemagic.io/publishing-yaml/distribution/#slack

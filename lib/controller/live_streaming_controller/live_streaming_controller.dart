@@ -296,6 +296,8 @@ class LiveStreamingController extends GetxController with DashboardService {
           } catch (e) {
             print("Error setting audio source: $e");
           }
+
+
           update(); // Assuming this is a GetX method
           print("Updated song: Artist - $fetchedArtist, Title - $fetchedTitle");
         } else {
