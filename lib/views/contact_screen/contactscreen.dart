@@ -95,7 +95,7 @@ class contactscreen extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        'whatsAPP',
+                                        'WhatsApp',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,

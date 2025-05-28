@@ -58,7 +58,7 @@ workflows:
         script: |
           echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
           flutter build apk --release \
-            --build-name=5.0.15 \
+            --build-name=5.0.15  \
             --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APP_ID") + 1))
 
     artifacts:
