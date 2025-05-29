@@ -34,10 +34,9 @@ class LiveStreamingController extends GetxController with DashboardService {
       "https://i.ibb.co.com/JWRXwxnf/7ecde97f-6287-4eef-976f-bd7ad97ebef3.png";
 
   late StreamSubscription<String> songSubscription;
-  late Timer _usageTimer =
-      Timer(Duration.zero, () {}); // prevent LateInit crash
-  final RxString dataUsage = " 0.00 MB".obs;
-  final int assumedBitrateKbps = 24;
+  late Timer _usageTimer = Timer(Duration.zero, () {}); // prevent LateInit crash
+  RxString dataUsage = " 0.00 MB".obs;
+  final int assumedBitrateKbps = 32;
 
   late final AudioPlayer audioPlayer; // Not nullable
 
@@ -124,6 +123,8 @@ class LiveStreamingController extends GetxController with DashboardService {
   Timer? _timer;
   Duration _elapsed = Duration.zero;
 
+
+
   /// Start emitting incrementing durations
   void startElapsedTimeTracking() {
     print("Starting elapsed time tracking...");
@@ -139,6 +140,7 @@ class LiveStreamingController extends GetxController with DashboardService {
       final seconds = _elapsed.inSeconds;
       final mb = (assumedBitrateKbps * seconds) / 8 / 1024;
       dataUsage.value = "${mb.toStringAsFixed(2)} MB";
+      print('Timerelapsed: 🔁 Time: ${dataUsage.value}');
     });
   }
 
@@ -205,7 +207,18 @@ class LiveStreamingController extends GetxController with DashboardService {
 
 // ✅ Replace with (temporary debug):
       print("API Response: ${value.data.toString()}");
+      String fetchedArtist = '';
+      String fetchedTitle = '';
 
+      final response = await http.get(Uri.parse(songInfoUrl));
+      if (response.statusCode == 200) {
+        final text = response.body.trim();
+        if (text.contains(" - ")) {
+          final parts = text.split(" - ");
+          fetchedArtist = parts[0].trim();
+          fetchedTitle = parts[1].trim();
+        }
+      }
       radioUrl.value = _liveShowModel.data.schedule.first.radioLink;
       radioImage.value = _liveShowModel.data.schedule.first.image;
       radioId.value = _liveShowModel.data.schedule.first.id.toString();
@@ -223,8 +236,8 @@ class LiveStreamingController extends GetxController with DashboardService {
             },
             tag: MediaItem(
               id: radioId.value,
-              title: radioTitle.value,
-              artist: radioHost.value,
+              title: fetchedTitle,
+              artist: fetchedArtist,
               album: radioAlbum.value,
               artUri: Uri.parse(
                   "https://i.ibb.co.com/JWRXwxnf/7ecde97f-6287-4eef-976f-bd7ad97ebef3.png"),
@@ -233,7 +246,7 @@ class LiveStreamingController extends GetxController with DashboardService {
         ],
       );
 
-      // await audioPlayer.setLoopMode(LoopMode.all);
+      await audioPlayer.setLoopMode(LoopMode.all);
       await audioPlayer.setAudioSource(
         playlist,
         preload: false, // ❗ prevents immediate stream fetching

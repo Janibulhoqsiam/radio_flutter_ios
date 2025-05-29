@@ -357,21 +357,36 @@ class LiveStreamingScreenMobile extends StatelessWidget {
                               ),
 
                               // Right: Data Usage
+                              // Padding(
+                              //   padding: EdgeInsets.only(
+                              //       right: MediaQuery.of(context).size.width *
+                              //           0.15),
+                              //   // Dynamic left padding based on screen width
+                              //
+                              //   child: Text(
+                              //     controller.dataUsage.value,
+                              //     style: const TextStyle(
+                              //       fontSize: 16.0,
+                              //       fontWeight: FontWeight.bold,
+                              //       color: CustomColor.whiteColor,
+                              //     ),
+                              //   ),
+                              // ),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.15),
-                                // Dynamic left padding based on screen width
-
-                                child: Text(
+                                  right: MediaQuery.of(context).size.width * 0.15,
+                                ),
+                                child: Obx(() => Text(
                                   controller.dataUsage.value,
                                   style: const TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                     color: CustomColor.whiteColor,
                                   ),
-                                ),
+                                )),
                               ),
+
+
                             ],
                           ),
 
