@@ -175,26 +175,73 @@ mixin DashboardService {
     return null;
   }
 
-  ///* Get LiveShow api services
+  // ///* Get LiveShow api services
+
+  // Future<LiveShowModel?> liveShowProcessApi() async {
+  //   Map<String, dynamic>? mapResponse;
+  //   try {
+  //     print("[DEBUG] Final API URL: ${ApiEndpoint.liveShowURL}?lang=${DynamicLanguage.selectedLanguage.value}");
+  //     mapResponse = await ApiMethod(isBasic: true).get(
+  //       "${ApiEndpoint.liveShowURL}?lang=${DynamicLanguage.selectedLanguage.value}",
+  //     );
+  //     if (mapResponse != null) {
+  //       LiveShowModel result = LiveShowModel.fromJson(mapResponse);
+  //       // CustomSnackBar.success(result.message.success.first.toString());
+  //       return result;
+  //     }
+  //   } catch (e) {
+  //     log.e(':ladybug::ladybug::ladybug: err from LiveShow api service ==> $e :ladybug::ladybug::ladybug:');
+  //     CustomSnackBar.error('Something went Wrong!');
+  //     return null;
+  //   }
+  //   return null;
+  // }
+
 
   Future<LiveShowModel?> liveShowProcessApi() async {
     Map<String, dynamic>? mapResponse;
     try {
-      mapResponse = await ApiMethod(isBasic: true).get(
-        "${ApiEndpoint.liveShowURL}?lang=${DynamicLanguage.selectedLanguage.value}",
-      );
+      final url = "${ApiEndpoint.liveShowURL}?lang=${DynamicLanguage.selectedLanguage.value}";
+      print("[DEBUG] Final API URL: $url");
+
+      mapResponse = await ApiMethod(isBasic: true).get(url);
+
       if (mapResponse != null) {
+        print("[DEBUG] Raw mapResponse: $mapResponse");
+        final dataJson = mapResponse['data'];
+        if (dataJson == null) {
+          throw StateError("API response 'data' field was null");
+        }
         LiveShowModel result = LiveShowModel.fromJson(mapResponse);
-        // CustomSnackBar.success(result.message.success.first.toString());
+
+        // Debug print the parsed result (customize to what you want to see)
+        print("[DEBUG] Parsed LiveShowModel result: $result");
+
+        // Or print some fields explicitly:
+        print("[DEBUG] result.data.baseUrl: ${result.data.baseUrl}");
+        print("[DEBUG] result.data.imagePath: ${result.data.imagePath}");
+        print("[DEBUG] result.data.schedule length: ${result.data.schedule.length}");
+        if (result.data.schedule.isNotEmpty) {
+          print("[DEBUG] First schedule item: ${result.data.schedule[0]}");
+        }
+
+
         return result;
       }
-    } catch (e) {
-      log.e(':ladybug::ladybug::ladybug: err from LiveShow api service ==> $e :ladybug::ladybug::ladybug:');
-      CustomSnackBar.error('Something went Wrong!');
+    } catch (e, stack) {
+      print("[ERROR] Exception during liveShowProcessApi: $e");
+      print("[ERROR] Stack Trace: $stack");
+      CustomSnackBar.error('Something went wrong!');
       return null;
     }
     return null;
   }
+
+
+
+
+
+
 
   ///* Get Gallery api services
   Future<GalleryModel?> galleryProcessApi() async {

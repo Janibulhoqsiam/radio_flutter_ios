@@ -203,6 +203,11 @@ class LiveStreamingController extends GetxController with DashboardService {
     update();
 
     await liveShowProcessApi().then((value) async {
+      print("[DEBUG] API returned value: $value");
+      if (value == null) {
+        throw StateError("liveShowProcessApi returned null.");
+      }
+
       _liveShowModel = value!;
 
 // ✅ Replace with (temporary debug):

@@ -1,7 +1,7 @@
 import 'package:adradio/extensions/custom_extensions.dart';
 
 class ApiEndpoint {
-  static const String mainDomain = "https://appdata.apintie.sr/";
+  static const String mainDomain = "https://appdata.apintie.sr";
 
 
   static const String baseUrl = "$mainDomain/api/v1";
