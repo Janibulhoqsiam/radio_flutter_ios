@@ -28,19 +28,6 @@ Future<void> main() async {
   MobileAds.instance.initialize();
 
 
-  // audioPlayer = AudioPlayer();
-  // audioHandler = MyAudioHandler(audioPlayer);
-  //
-  // await AudioService.init(
-  //   builder: () => audioHandler,
-  //   config: AudioServiceConfig(
-  //     androidNotificationChannelId: 'com.ryanheise.audioservice.AudioService',
-  //     androidNotificationChannelName: 'Audio Playback',
-  //     androidNotificationOngoing: true,
-  //   ),
-  // );
-
-
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.audioservice.AudioService',
     androidNotificationChannelName: 'Audio Playback',
