@@ -14,6 +14,7 @@ import '/custom_assets/assets.gen.dart';
 import '../../controller/live_streaming_controller/live_streaming_controller.dart';
 import '../../controller/navigation_controller/navigation_controller.dart';
 import '../../widgets/drawer/drawer_widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NavigationScreenMobile extends StatelessWidget {
   NavigationScreenMobile({super.key});
@@ -523,8 +524,13 @@ class BottomItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        controller.selectedIndex.value = index!;
-        controller.appTitle.value = controller.appTitleList[index!];
+        // controller.selectedIndex.value = index!;
+        // controller.appTitle.value = controller.appTitleList[index!];
+
+        if (index == 0) {
+          Fluttertoast.showToast(msg: "This tab is disabled for now");
+          return;
+        }
         // debugPrint(">> Selected Index >> ${controller.selectedIndex.value}");
 
         //
