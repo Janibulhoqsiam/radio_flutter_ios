@@ -1,6 +1,11 @@
 workflows:
+<<<<<<< HEAD
   android-workflow:
     name: Android Workflow
+=======
+  ios-workflow:
+    name: iOS Workflow1
+>>>>>>> 9a34715b4ffe0fa43985346b9e51ae349752ed3a
     instance_type: mac_mini_m2
     max_build_duration: 60
 
@@ -38,4 +43,38 @@ workflows:
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
+<<<<<<< HEAD
       - build/app/outputs/bundle/release/app-release.aab
+=======
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
+      email:
+        recipients:
+          - janibulhoquesyeam@gmail.com
+        notify:
+          success: true # To receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+      slack:
+        # See the following link about how to connect your Slack account - https://docs.codemagic.io/publishing-yaml/distribution/#slack
+        channel: "#builds"
+        notify_on_build_start: true # To receive a notification when a build starts
+        notify:
+          success: true # To receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+      app_store_connect:
+        auth: integration
+
+        # Configuration related to TestFlight (optional)
+        # Note: This action is performed during post-processing.
+        submit_to_testflight: false
+        beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
+          - App Store Connect Users
+          - Apintie 2.0.0 Testers
+
+        # Configuration related to App Store (optional)
+        # Note: This action is performed during post-processing.
+        submit_to_app_store: true
+>>>>>>> 9a34715b4ffe0fa43985346b9e51ae349752ed3a
