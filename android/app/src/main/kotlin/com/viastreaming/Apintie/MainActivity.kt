@@ -1,4 +1,4 @@
-package com.viastreaming.Apintiee
+package com.viastreaming.Apintie
 
 
 import android.content.Intent

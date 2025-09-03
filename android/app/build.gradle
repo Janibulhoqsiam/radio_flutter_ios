@@ -58,13 +58,13 @@ if (keystorePropertiesFile.exists()) {
 
         defaultConfig {
             // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-            applicationId "com.viastreaming.Apintiee"
+            applicationId "com.viastreaming.Apintie"
             // You can update the following values to match your application needs.
             // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
             minSdkVersion 23
             targetSdkVersion 35
-            versionCode flutterVersionCode.toInteger()
-            versionName flutterVersionName
+            versionCode 2007
+            versionName "3.0.0"
         }
 
         signingConfigs {
