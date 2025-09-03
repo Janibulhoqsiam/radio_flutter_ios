@@ -20,7 +20,7 @@ dependencies:
 
   just_audio: ^0.10.0
   just_audio_background: ^0.0.1-beta.10
-#  audio_service: ^0.18.12
+  #  audio_service: ^0.18.12
   rxdart: ^0.28.0
 
   flutter_screenutil: 5.9.3
@@ -63,13 +63,13 @@ dependencies:
       url: https://github.com/appdevsx/dynamic_languages
       ref: main
   flutter_ios_airplay: ^0.0.5
-  change_app_package_name: ^1.5.0
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  change_app_package_name: ^1.5.0
   build_runner: any
   flutter_gen_runner: any
   rename: ^3.0.2
