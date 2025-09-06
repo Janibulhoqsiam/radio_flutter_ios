@@ -40,8 +40,9 @@ if (keystorePropertiesFile.exists()) {
 //}
     android {
         namespace "net.appdevs.adradio"
-        compileSdkVersion 35
-        ndkVersion flutter.ndkVersion
+        compileSdkVersion 36
+//        ndkVersion flutter.ndkVersion
+        ndkVersion "29.0.13846066"
 
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
